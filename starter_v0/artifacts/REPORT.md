@@ -34,16 +34,20 @@ Ví dụ: "Research agent: tìm tin theo từ khóa / theo tài khoản, đọc 
 
 | Tên tool | Làm được gì | Tool mới nhóm thêm? |
 |---|---|---|
-| `clarify` | Hỏi lại khi thiếu thông tin hoặc cần người dùng xác nhận. | Không |
-| `timeline` | Lấy các bài đăng gần đây từ một tài khoản Twitter/X cụ thể. | Không |
-| `social_search` | Tìm bài đăng Twitter/X theo từ khóa, sắp xếp mới nhất hoặc phổ biến. | Không |
-| `lookup` | Tìm thông tin trên web, hỗ trợ lọc tin tức và khoảng thời gian. | Không |
-| `fetch` | Đọc nội dung từ một URL để phục vụ tóm tắt, phân tích. | Không |
-| `format` | Trình bày dữ liệu đã thu thập thành bản tin, danh sách hoặc chuỗi bài đăng. | Không |
-| `send` | Gửi nội dung lên Telegram sau khi người dùng xác nhận. | Không |
-| `policy` | Tra cứu quy định nội bộ về dữ liệu, trích dẫn và sử dụng AI. | Không |
-| `papers` | Tìm paper trên arXiv theo chủ đề và cách sắp xếp. | Không |
-| `paper_text` | Trích xuất văn bản từ paper arXiv theo ID hoặc URL. | Không |
+| clarify | hỏi lại người dùng khi thiếu thông tin hoặc cần xác nhận | không |
+| timeline | lấy bài đăng gần đây từ một tài khoản X/Twitter | không |
+| social_search | tìm bài đăng X/Twitter theo chủ đề | không |
+| lookup | tìm thông tin và tin tức trên web | không |
+| fetch | đọc nội dung một URL web | không |
+| format | định dạng dữ liệu đã có thành bản tin | không |
+| send | gửi Telegram sau khi người dùng xác nhận | không |
+| policy | tra cứu chính sách nội bộ | không |
+| papers | tìm paper trên arXiv | không |
+| paper_text | trích xuất văn bản từ PDF paper arXiv | không |
+| hackernews | tìm bài Hacker News, điểm và số bình luận | có |
+| github_repos | tìm repository GitHub theo chủ đề và ngôn ngữ | có |
+| wikipedia | lấy phần giới thiệu bài Wikipedia | có |
+| hf_models | tìm model Hugging Face theo tên hoặc tác vụ | có |
 
 ## A3. Câu hỏi mẫu để thử
 
