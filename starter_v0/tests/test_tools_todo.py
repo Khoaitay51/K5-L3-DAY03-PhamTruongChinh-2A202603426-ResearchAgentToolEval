@@ -46,13 +46,30 @@ def test_format_empty_items_does_not_crash() -> None:
 # ---------------- send (guardrail) ----------------
 
 def test_send_confirmed_posts_to_telegram(monkeypatch, fake_http) -> None:
-    # Set TELEGRAM_BOT_TOKEN / TELEGRAM_CHAT_ID, mock HTTP.
-    # Assert: exactly one POST, URL contains the token, json has chat_id + text, status == "sent".
-    pytest.skip(TODO)
+    monkeypatch.setenv("TELEGRAM_BOT_TOKEN", "test-bot-token")
+    monkeypatch.setenv("TELEGRAM_CHAT_ID", "12345")
+    calls = fake_http(FakeResponse({"ok": True, "result": {"message_id": 9}}))
+    send_tool = TOOL_FUNCTIONS["send"]
+
+    result = send_tool(text="Bản tin lab", confirmed=True)
+
+    assert result["status"] == "sent"
+    assert len(calls) == 1
+    assert calls[0]["method"] == "POST"
+    assert "test-bot-token" in calls[0]["url"]
+    assert calls[0]["json"]["chat_id"] == "12345"
+    assert calls[0]["json"]["text"] == "Bản tin lab"
 
 
 def test_send_confirmed_without_env_returns_error_and_no_request(fake_http) -> None:
-    pytest.skip(TODO)
+    calls = fake_http(FakeResponse({"ok": True}))
+    send_tool = TOOL_FUNCTIONS["send"]
+    result = send_tool(text="Bản tin", confirmed=True)
+
+    assert result["status"] == "error"
+    assert result["error"] == "ConfigurationError"
+    assert "TELEGRAM_BOT_TOKEN" in result["message"]
+    assert calls == []
 
 
 # ---------------- lookup ----------------

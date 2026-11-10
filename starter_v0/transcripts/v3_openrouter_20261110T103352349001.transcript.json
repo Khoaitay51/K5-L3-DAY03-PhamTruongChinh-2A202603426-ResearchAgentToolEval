@@ -1,0 +1,28 @@
+{
+  "transcript_id": "v3_openrouter_20261110T103352349001",
+  "version": "v3",
+  "artifact_version": "v3+peb1c8179815b+t5b22a2476d41",
+  "prompt_hash": "eb1c8179815bd79d34de7d326420bb99b3072e6e8ae96464c02d4411f905fc68",
+  "tools_hash": "5b22a2476d41b989d5dc1e54f24ce7890e781909deb2f7afafb856ab53a6d7c0",
+  "provider": "openrouter",
+  "model": "openai/gpt-4o-mini",
+  "system_prompt": "artifacts\\system_prompt.md",
+  "tools": "artifacts\\tools.yaml",
+  "history_window": 5,
+  "max_tool_rounds": 4,
+  "created_at": "2026-11-10T10:33:52",
+  "updated_at": "2026-11-10T10:38:15",
+  "turns": [
+    {
+      "turn_index": 1,
+      "started_at": "2026-11-10T10:38:12",
+      "user": "node js là gì",
+      "status": "provider_error",
+      "assistant_text": "⚠️ Lỗi kết nối Provider (RuntimeError): Missing API key env var: OPENROUTER_API_KEY",
+      "rounds": [],
+      "tool_events": [],
+      "error": "RuntimeError: Missing API key env var: OPENROUTER_API_KEY",
+      "ended_at": "2026-11-10T10:38:15"
+    }
+  ]
+}
