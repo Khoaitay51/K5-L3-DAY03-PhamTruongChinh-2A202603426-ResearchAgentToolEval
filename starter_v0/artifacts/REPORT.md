@@ -6,9 +6,9 @@
 
 ## Team
 
-- Team:
-- Members:
-- Provider/model:
+- Team: PhamTruongChinh-2A202603426
+- Members: Phạm Trường Chinh-2A202603426, Nguyễn Minh Quân-2A202603510, Nguyễn Văn Ba-2A202603489, Phạm Trung Kiên-2A202603479, Nguyễn Thanh Tùng-2A202603446
+- Provider/model: OpenAI
 
 ---
 
@@ -17,6 +17,8 @@
 ## A1. Agent này làm được gì
 
 > 1–2 câu mô tả agent dùng để làm gì (cho team khác hiểu nhanh).
+
+ Agent hỗ trợ tìm tin AI, theo dõi Twitter/X, đọc URL, tìm/đọc paper arXiv, tra policy và gửi bản tin Telegram sau xác nhận
 
 Ví dụ: "Research agent: tìm tin theo từ khóa / theo tài khoản, đọc URL, tổng hợp thành digest, và gửi lên Telegram khi được xác nhận."
 
@@ -32,17 +34,26 @@ Ví dụ: "Research agent: tìm tin theo từ khóa / theo tài khoản, đọc 
 
 | Tên tool | Làm được gì | Tool mới nhóm thêm? |
 |---|---|---|
-| clarify | hỏi lại người dùng khi thiếu thông tin | không |
-|  |  |  |
-|  |  |  |
+| `clarify` | Hỏi lại khi thiếu thông tin hoặc cần người dùng xác nhận. | Không |
+| `timeline` | Lấy các bài đăng gần đây từ một tài khoản Twitter/X cụ thể. | Không |
+| `social_search` | Tìm bài đăng Twitter/X theo từ khóa, sắp xếp mới nhất hoặc phổ biến. | Không |
+| `lookup` | Tìm thông tin trên web, hỗ trợ lọc tin tức và khoảng thời gian. | Không |
+| `fetch` | Đọc nội dung từ một URL để phục vụ tóm tắt, phân tích. | Không |
+| `format` | Trình bày dữ liệu đã thu thập thành bản tin, danh sách hoặc chuỗi bài đăng. | Không |
+| `send` | Gửi nội dung lên Telegram sau khi người dùng xác nhận. | Không |
+| `policy` | Tra cứu quy định nội bộ về dữ liệu, trích dẫn và sử dụng AI. | Không |
+| `papers` | Tìm paper trên arXiv theo chủ đề và cách sắp xếp. | Không |
+| `paper_text` | Trích xuất văn bản từ paper arXiv theo ID hoặc URL. | Không |
 
 ## A3. Câu hỏi mẫu để thử
 
 > 3–5 câu hỏi/yêu cầu mẫu để team khác tự thử agent ngay.
 
-1.
-2.
-3.
+1.Lấy 5 tweet mới nhất của Andrej Karpathy.
+
+2.Tìm 3 paper arXiv về tool-calling evaluation.
+
+3.Tóm tắt vài tweet mới nhất giúp mình.
 
 ---
 
@@ -92,54 +103,129 @@ Group run (`v3`, openai): **10/10 PASS**, `case_accuracy=1.0` — `runs/v3_B_gro
 
 ## B4. Live Chat Evidence
 
-Use `transcripts/*.transcript.json`.
+Bằng chứng chính:
 
-| Turn | User Request | Tool Calls | Version Evidence | Outcome |
+- Transcript T1: `transcripts/v3_openai_20261110T051320715159.transcript.json`
+- Transcript T2: `transcripts/v3_openrouter_20261110T112555195843.transcript.json`
+- Cả hai có artifact version: `v3+p933b11f24ccb+t0fb36ba058b9`.
+- T1 sử dụng OpenAI / `gpt-4o-mini`; T2 sử dụng OpenRouter / `openai/gpt-4o-mini`.
+
+| Transcript / Turn | User Request | Tool Calls | Version Evidence | Outcome |
 |---|---|---|---|---|
-|  |  |  |  |  |
+| T1 / 3 | Tin AI hôm nay có gì nổi bật? | `lookup(query="AI", topic="news", timeframe="day", max_results=5)` | v3 / prompt `933b11f24ccb` | Tool trả về 5 item; agent tổng hợp thành câu trả lời có liên kết nguồn. |
+| T2 / 1 | Tóm tắt vài tweet mới nhất giúp mình | `clarify(response_type="text")` | v3 / prompt `933b11f24ccb` | Agent hỏi tài khoản cần theo dõi và chuyển sang trạng thái `waiting_for_user`. |
+| T1 / 4–5 | Tóm tắt vài tweet mới nhất → Tài khoản X của Sam Altman | Hỏi lại bằng văn bản, sau đó gọi `timeline(screenname="sama", limit=5)` | v3 / prompt `933b11f24ccb` | Agent sử dụng thông tin bổ sung, map đúng handle và nhận 5 bài đăng. Lượt hỏi lại chưa dùng tool `clarify`. |
+| T1 / 7 | Tìm 3 bài báo arXiv gần đây về AI agent evaluation | `papers(query="AI agent evaluation", max_results=3, sort_by="lastUpdatedDate")` | v3 / prompt `933b11f24ccb` | Tool trả về 3 paper. Cần kiểm tra thủ công độ liên quan; đủ số lượng chưa đồng nghĩa đúng chủ đề. |
+| T1 / 8–9 | Gửi bản tin AI vừa rồi lên Telegram → có | Hỏi xác nhận bằng văn bản; sau đó runtime thực thi `send(confirmed=false)` | v3 / prompt `933b11f24ccb` | Bản nháp được giữ ở trạng thái `needs_confirmation`, chưa gửi ra ngoài. |
+| T1 / 10 | Người dùng bấm Confirm & Send Telegram | `send(confirmed=true)` | v3 / prompt `933b11f24ccb` | Tool trả `status="sent"` và `message_id=13`, chứng minh đã gửi thành công. |
+
+### Nhận xét
+
+Live chat chứng minh agent có thể tìm dữ liệu, sử dụng thông tin bổ sung và thực hiện luồng gửi Telegram có xác nhận.
+
+Tuy nhiên, hành vi chưa hoàn toàn nhất quán: cùng tình huống thiếu tài khoản, agent có lúc gọi `clarify`, có lúc chỉ hỏi bằng văn bản. Với yêu cầu tóm tắt bài đăng từ tài khoản, việc gọi `fetch` trên URL hồ sơ cũng cần được review để xác định có nên chuyển sang `timeline`.
+
+Kết quả live chat cần được đánh giá cùng nội dung tool trả về, không chỉ dựa vào trạng thái `answered`.
 
 ## B5. Bonus Evidence
 
-Only fill if your team did bonus.
-
-| Bonus | Evidence File | What Worked | Risk / Guardrail |
+| Hạng mục | Evidence File | What Worked | Risk / Guardrail |
 |---|---|---|---|
-| send (Telegram) |  |  |  |
-| arXiv/company policy |  |  |  |
-| UI |  |  |  |
-| Tool unit tests (`tests/`) | `pytest` output |  |  |
+| Gửi Telegram có xác nhận | `transcripts/v3_openai_20261110T051320715159.transcript.json`, turn 9–10 | Runtime giữ bản nháp trước khi người dùng bấm xác nhận; lần gửi cuối trả `status="sent"`. | Không tin trực tiếp giá trị `confirmed=true` do model tạo ra; việc gửi phải đi qua cơ chế xác nhận của runtime/UI. |
+| Tìm paper arXiv | Transcript trên, turn 7 | `papers` nhận đúng số lượng yêu cầu và trả 3 paper. | Cần kiểm tra độ liên quan và phân biệt abstract với nội dung toàn văn; không coi kết quả tìm kiếm là bằng chứng đã đọc paper. |
+| Tra cứu policy nội bộ | `data/eval_group.json`, case G03; `runs/v3_B_group_openai_20261110T122514058305.json` | Model route đúng tới `policy(policy_area="data_privacy")`. | PASS routing chưa chứng minh câu trả lời cuối diễn giải policy chính xác. |
+| UI | `app.py`; transcript trên, turn 10 | Có thao tác `[UI] Confirm & Send Telegram` được ghi vào transcript và gửi thành công. | Transcript chứng minh luồng thao tác đã chạy; cần bổ sung link public đang hoạt động vào phần A. |
+| Unit test Telegram | `tests/test_send_telegram.py` | Có 10 test kiểm tra xác nhận, thiếu cấu hình, lỗi API, hủy gửi, chống gửi trùng, giới hạn độ dài và timeout. | Đây là bằng chứng về mã test; chưa có output chạy pytest được dẫn trong báo cáo để kết luận toàn bộ suite pass. |
+| Tool Unit Test Challenge | `tests/test_tools_todo.py` | Đã có 2 test thực thi cho gửi Telegram thành công và thiếu cấu hình. | Còn 15 test stub dùng `pytest.skip(TODO)`; chưa đạt yêu cầu 0 skipped và chưa đủ bằng chứng hoàn thành test cho tool mới. |
 
-Tool unit tests: số test đã viết, số bug tìm được trong tool có sẵn (nếu có), và một ví dụ lỗi mà unit test bắt được nhưng eval không bắt được.
+### Phân biệt unit test và model eval
+
+Model eval kiểm tra agent chọn đúng tool và truyền đúng arguments. Unit test kiểm tra implementation của tool có xử lý arguments, gọi API và trả kết quả đúng hay không.
+
+Ví dụ, `test_lookup_sends_expected_request_and_maps_results` trong `tests/test_tools_examples.py` kiểm tra request thực tế có `topic`, `time_range` và `max_results`. Nếu model truyền đúng `timeframe="day"` nhưng implementation quên đưa `time_range` vào HTTP request, model eval vẫn có thể PASS trong khi unit test này sẽ phát hiện lỗi.
+
+Đây là ví dụ về loại lỗi unit test có thể bắt; chưa có bằng chứng để khẳng định nhóm đã phát hiện và sửa một bug như vậy.
+
+### Trạng thái kiểm thử
+
+- Các test đã triển khai chạy thành công, không có test fail (`0 failed`).
+- Các test còn `skip` chưa được tính là đã kiểm tra thành công; cần hoàn thiện để đạt yêu cầu `0 skipped`.
+- Chưa ghi nhận bug có sẵn được phát hiện và sửa kèm regression test.
+- Các tool có sẵn trong starter không được tính là tool mới.
 
 ## B6. Reflection
 
-- Which fixes belonged in `system_prompt.md`?
-- Which fixes belonged in `tools.yaml`?
-- Which failure needed manual review instead of automatic grading?
-- What would you improve next?
+### Những sửa đổi thuộc `system_prompt.md`
+
+Các quy tắc điều phối chung phù hợp để đặt trong system prompt:
+
+- Không tự đoán tài khoản, URL hoặc paper ID khi thiếu dữ liệu.
+- Hỏi lại bằng `clarify` khi thông tin cần thiết chưa có.
+- Phân biệt yêu cầu trong phạm vi research với câu hỏi ngoài phạm vi.
+- Dùng thông tin các lượt trước để bổ sung arguments cho yêu cầu mới nhất.
+- Bỏ yêu cầu cũ khi người dùng chuyển nguồn hoặc sửa yêu cầu.
+- Yêu cầu xác nhận trước khi gửi nội dung ra ngoài.
+
+Hai thay đổi có bằng chứng rõ trong chuỗi run ở B1 là: v2 làm rõ `clarify(response_type="yes_no")` cho xác nhận gửi; v3 yêu cầu bỏ tool thuộc nguồn đã bị hủy, giúp sửa lỗi gọi thừa `social_search` ở M06.
+
+V1 sửa nhiều quy tắc cùng lúc nên chưa thể tách riêng đóng góp của từng quy tắc vào mức tăng điểm.
+
+### Những sửa đổi thuộc `tools.yaml`
+
+Các quy ước riêng của từng tool nên đặt ngay trong declaration:
+
+- `timeline.screenname`: handle không có ký tự `@`.
+- `social_search.search_type`: phân biệt `Top` và `Latest`.
+- `lookup.topic`: dùng `news` khi tìm tin tức.
+- `lookup.timeframe`: mô tả rõ `day`, `week`, `month`, `year`.
+- `send.confirmed`: chỉ có giá trị true sau khi người dùng xác nhận đúng nội dung cần gửi.
+- Mỗi tool cần mô tả rõ khi nào dùng và khi nào không dùng.
+
+Trong repo hiện tại, nhiều description vẫn còn ngắn và chung chung. Vì vậy, phần này là hướng cần hoàn thiện thêm; không nên khẳng định toàn bộ declaration đã được tối ưu.
+
+### Những trường hợp cần review thủ công
+
+1. **Tool call đúng nhưng tool thực thi lỗi.** Trong group run, G02 được chấm PASS về routing/arguments dù `papers` trả `ReadTimeout`. Điểm eval không phản ánh đầy đủ việc hoàn thành nhiệm vụ.
+2. **Tìm được paper nhưng chưa chắc đúng chủ đề.** Cần đọc tiêu đề, abstract và đánh giá độ liên quan trước khi kết luận kết quả hữu ích.
+3. **Hỏi lại bằng văn bản thay vì `clarify`.** Người dùng vẫn có thể hiểu câu hỏi, nhưng hành vi không khớp contract mà eval yêu cầu.
+4. **Xác nhận gửi nội dung.** Cần kiểm tra người dùng đã nhìn thấy đúng bản nháp và đúng đích gửi; một câu “có” không tự chứng minh toàn bộ luồng xác nhận an toàn.
+
+Ngoài ra, các run v1–v3 đang được dẫn ở B1 có tool result báo thiếu API key. Điểm của chúng vẫn có ý nghĩa đối với routing/arguments, nhưng không đủ để khẳng định tool đã lấy dữ liệu thành công.
+
+### Hạn chế của kết quả
+
+- Chuỗi B1 hiện chuyển từ OpenRouter ở v0 sang OpenAI ở v1–v3, làm hạn chế khả năng quy toàn bộ mức tăng cho thay đổi prompt.
+- Base eval được dùng nhiều lần để tối ưu nên có nguy cơ prompt phù hợp quá mức với các case đã biết.
+- Multiturn eval hiện ghép các lượt trước thành ngữ cảnh cho một lần gọi model; chưa tương đương toàn bộ hội thoại tương tác thực tế.
+- Điểm 100% chỉ áp dụng cho các case, arguments được chấm và artifact hash của run tương ứng.
+- Prompt hiện tại khác snapshot v3 đã lưu; cần gắn kết quả với đúng snapshot/hash.
+
+### Hướng cải thiện tiếp theo
+
+- Đo riêng tỷ lệ routing đúng, arguments đúng, tool thực thi thành công và nhiệm vụ hoàn thành.
+- Bổ sung case mới chưa dùng để chỉnh prompt.
+- Hoàn thiện description và convention arguments trong `tools.yaml`.
+- Bổ sung unit test cho input biên, timeout, thiếu key và dữ liệu trả về không hợp lệ.
+- Chạy lại cùng provider/model và snapshot cố định để so sánh nhất quán.
+- Kiểm tra thủ công độ liên quan của nguồn, chất lượng tổng hợp và tính chính xác của trích dẫn.
 
 ## B7. Small Local Model Challenge (bonus)
 
-Only fill if your team did the local model challenge.
+**Trạng thái: đã có transcript thử nghiệm Ollama, nhưng chưa đủ bằng chứng hoàn thành challenge.**
 
-| Version | Model (provider) | Prompt/Tools | case_accuracy | tool_routing | argument | multiturn | Run File |
+Repo có các transcript `v3_ollama_*.transcript.json`. Tuy nhiên, chưa có run JSON base eval qua Ollama trong thư mục `runs/`, chưa có bằng chứng chạy ít nhất hai model local và hai vòng tối ưu `v4-local`, `v5-local`.
+
+| Version | Model / Provider | Prompt/Tools | case_accuracy | tool_routing | argument | multiturn | Evidence |
 |---|---|---|---|---|---|---|---|
-| v3 | (cloud) | v3 |  |  |  |  |  |
-| v3-... | (ollama) | v3 |  |  |  |  |  |
-| v3-... | (ollama) | v3 |  |  |  |  |  |
-| v4-local |  |  |  |  |  |  |  |
-| v5-local |  |  |  |  |  |  |  |
+| v3 cloud | gpt-4o-mini / OpenAI | `v3+p933b11f24ccb+t0fb36ba058b9` | 1.00 | 1.00 | 1.00 | 1.00 | `runs/v3_B_base_openai_20261110T111728560670.json`; điểm routing/arguments, tool results còn lỗi thiếu key |
+| v3 local | Ollama, chưa tổng hợp model từ transcript | Chưa đối chiếu hash | Chưa đo | Chưa đo | Chưa đo | Chưa đo | Có transcript thử nghiệm, chưa có base eval run |
+| v4-local | Chưa có bằng chứng | Chưa có bằng chứng | Chưa đo | Chưa đo | Chưa đo | Chưa đo | Chưa có run JSON |
+| v5-local | Chưa có bằng chứng | Chưa có bằng chứng | Chưa đo | Chưa đo | Chưa đo | Chưa đo | Chưa có run JSON |
 
-Lỗi đặc thù của model nhỏ (đếm từ run JSON):
+### Kết luận hiện tại
 
-| Failure Pattern | Count | Example Case | Fix Tried | Helped? |
-|---|---|---|---|---|
-| wrong / hallucinated tool |  |  |  |  |
-| invalid JSON args (`_invalid_json_arguments`) |  |  |  |  |
-| no tool call / answered directly |  |  |  |  |
-| missed `clarify` |  |  |  |  |
-| repeated / unnecessary calls |  |  |  |  |
+Chưa đủ dữ liệu để đếm các lỗi đặc thù của model nhỏ hoặc kết luận thay đổi prompt nào giúp model local gọi tool tốt hơn. Không thể dùng transcript thử nghiệm đơn lẻ thay cho bảng so sánh base eval.
 
-- Cái gì giúp model nhỏ gọi tool đúng hơn nhất? Bằng chứng?
-- Bản prompt tối ưu cho local chạy trên model cloud thì sao?
-- Khi nào nhóm sẽ chọn model local thay vì cloud cho agent này?
+Để hoàn thành challenge, cần chạy cùng snapshot v3 trên ít nhất hai model local, tối ưu thêm hai vòng, ghi đầy đủ run JSON và version log, sau đó kiểm tra ngược prompt tối ưu local trên model cloud.
+
+Model local là phương án đáng thử khi cần giảm chi phí gọi model hoặc giữ suy luận trên máy. Tuy nhiên, nếu agent vẫn gọi các API tìm kiếm bên ngoài thì toàn bộ hệ thống chưa hoạt động offline. Quyết định sử dụng cần dựa trên độ chính xác và độ trễ đo được trên máy thực tế.
