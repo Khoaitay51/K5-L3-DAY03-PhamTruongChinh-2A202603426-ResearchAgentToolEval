@@ -55,9 +55,9 @@ Fill from `artifacts/version_log.csv` and `runs/*.json`.
 | Version | Changed Artifact | Hypothesis | Metric Before | Metric After | Run File |
 |---|---|---|---:|---:|---|
 | v0 | baseline | Đo hành vi chưa tối ưu trước khi sửa | - | 0.75 | `runs/v0_B_base_openrouter_20261110T101854161775.json` |
-| v1 |  |  |  |  |  |
-| v2 |  |  |  |  |  |
-| v3 |  |  |  |  |  |
+| v1 | `system_prompt.md` | Prompt rõ routing/clarify/out-of-scope sẽ nâng case_accuracy | 0.75 | 0.90 | `runs/v1_B_base_openai_20261110T110949070180.json` |
+| v2 | `system_prompt.md` | Force `clarify(yes_no)` trước send sẽ PASS R12 | 0.90 | 0.95 | `runs/v2_B_base_openai_20261110T111640723060.json` |
+| v3 | `system_prompt.md` | Multi-turn switch source chỉ gọi tool mới sẽ PASS M06 | 0.95 | 1.00 | `runs/v3_B_base_openai_20261110T111728560670.json` |
 
 ## B2. Failure Analysis
 
@@ -77,7 +77,18 @@ List the 10 cases added to `data/eval_group.json` (5 single turn + 5 multi turn)
 
 | Case ID | What It Tests | Expected Tool/Behavior | Result |
 |---|---|---|---|
-|  |  |  |  |
+| `G01_karpathy_timeline` (single) | Map Andrej Karpathy → `karpathy` + timeline | `timeline(screenname="karpathy")` | PASS |
+| `G02_arxiv_papers_routing` (single) | Route tới tool mới `papers` | `papers(max_results=3)` | PASS |
+| `G03_policy_data_privacy` (single) | Route tới tool mới `policy` | `policy(policy_area="data_privacy")` | PASS |
+| `G04_latest_search_type` (single) | Arg `search_type=Latest` cho “mới nhất” | `social_search(query="Claude 4", search_type="Latest")` | PASS |
+| `G05_publish_confirm_yes_no` (single) | Confirm trước khi post Telegram | `clarify(response_type="yes_no")` | PASS |
+| `G06_multiturn_papers_then_read` (multi) | Switch papers → `paper_text` + `max_pages=2` | `paper_text(arxiv_url="1706.03762", max_pages=2)` | PASS |
+| `G07_multiturn_policy_then_news` (multi) | Switch policy → web news AI agents | `lookup(query="AI agents", topic="news", timeframe="day")` | PASS |
+| `G08_multiturn_missing_handle_then_sama` (multi) | Fill Sam Altman → `sama`, limit=7 | `timeline(screenname="sama", limit=7)` | PASS |
+| `G09_multiturn_top_then_correct_latest` (multi) | Sửa Top → Latest, giữ query Gemini | `social_search(query="Gemini", search_type="Latest")` | PASS |
+| `G10_multiturn_two_urls_parallel` (multi) | Parallel fetch 2 URL | `fetch` × 2 URL OpenAI + Anthropic | PASS |
+
+Group run (`v3`, openai): **10/10 PASS**, `case_accuracy=1.0` — `runs/v3_B_group_openai_20261110T122514058305.json`
 
 ## B4. Live Chat Evidence
 
