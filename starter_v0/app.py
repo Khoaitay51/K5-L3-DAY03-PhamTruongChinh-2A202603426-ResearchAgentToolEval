@@ -28,7 +28,6 @@ from versioning import artifact_version_dict, build_artifact_version
 ARTIFACTS_DIR = ROOT / "artifacts"
 TRANSCRIPTS_DIR = ROOT / "transcripts"
 RUNS_DIR = ROOT / "runs"
-ENV_PATH = ROOT / ".env"
 
 load_lab_env(ROOT)
 
@@ -37,42 +36,6 @@ st.set_page_config(
     page_icon="🔬",
     layout="wide",
 )
-
-ENV_KEYS = [
-    ("OPENROUTER_API_KEY", "OpenRouter API Key (Recommended)"),
-    ("OPENAI_API_KEY", "OpenAI API Key (Optional)"),
-    ("ANTHROPIC_API_KEY", "Anthropic API Key (Optional)"),
-    ("GEMINI_API_KEY", "Gemini API Key (Optional)"),
-    ("TAVILY_API_KEY", "Tavily API Key (lookup)"),
-    ("FIRECRAWL_API_KEY", "Firecrawl API Key (fetch)"),
-    ("RAPIDAPI_KEY", "RapidAPI Key (timeline / social_search)"),
-    ("RAPIDAPI_TWITTER_HOST", "RapidAPI Twitter Host"),
-    ("TELEGRAM_BOT_TOKEN", "Telegram Bot Token (send bonus)"),
-    ("TELEGRAM_CHAT_ID", "Telegram Chat ID (send bonus)"),
-    ("ARXIV_USER_AGENT", "arXiv User-Agent (papers bonus)"),
-]
-
-
-def save_env_file(updates: dict[str, str]) -> None:
-    existing: dict[str, str] = {}
-    if ENV_PATH.exists():
-        for raw_line in ENV_PATH.read_text(encoding="utf-8").splitlines():
-            line = raw_line.strip()
-            if line and not line.startswith("#") and "=" in line:
-                k, v = line.split("=", 1)
-                existing[k.strip()] = v.strip().strip("\"'")
-    existing.update({k: v.strip() for k, v in updates.items() if v is not None})
-    lines = [
-        "# Day 03 Lab v2 — Research Agent (.env)",
-        "# Generated/updated via Streamlit UI",
-        "",
-    ]
-    for key, _ in ENV_KEYS:
-        val = existing.get(key, os.getenv(key, ""))
-        lines.append(f"{key}={val}")
-        if val:
-            os.environ[key] = val
-    ENV_PATH.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def init_new_session(
@@ -170,38 +133,18 @@ with st.sidebar:
     st.divider()
     st.markdown("### 🔑 Trạng thái API Keys (`.env`)")
     key_badges = []
-    for k, _ in [
-        ("OPENROUTER_API_KEY", "OpenRouter"),
-        ("TAVILY_API_KEY", "Tavily"),
-        ("FIRECRAWL_API_KEY", "Firecrawl"),
-        ("RAPIDAPI_KEY", "RapidAPI"),
-        ("TELEGRAM_BOT_TOKEN", "Telegram"),
+    for k in [
+        "OPENROUTER_API_KEY",
+        "OPENAI_API_KEY",
+        "TAVILY_API_KEY",
+        "FIRECRAWL_API_KEY",
+        "RAPIDAPI_KEY",
+        "TELEGRAM_BOT_TOKEN",
     ]:
         has_key = bool(os.getenv(k))
         icon = "✅" if has_key else "⚪"
         key_badges.append(f"{icon} `{k}`")
     st.markdown("  \n".join(key_badges))
-
-    with st.expander("⚙️ Cấu hình / Lưu `.env`"):
-        env_inputs: dict[str, str] = {}
-        for k, label in ENV_KEYS:
-            current_val = os.getenv(k, "")
-            if k in {"RAPIDAPI_TWITTER_HOST", "ARXIV_USER_AGENT", "TELEGRAM_CHAT_ID"}:
-                default_val = current_val or (
-                    "twitter-api45.p.rapidapi.com"
-                    if k == "RAPIDAPI_TWITTER_HOST"
-                    else "AI20k-Day03-Research-Agent/1.0"
-                    if k == "ARXIV_USER_AGENT"
-                    else ""
-                )
-                env_inputs[k] = st.text_input(label, value=default_val, key=f"env_{k}")
-            else:
-                env_inputs[k] = st.text_input(label, value=current_val, type="password", key=f"env_{k}")
-        if st.button("💾 Lưu vào starter_v0/.env", use_container_width=True):
-            save_env_file(env_inputs)
-            load_lab_env(ROOT)
-            st.success("Đã lưu `starter_v0/.env` thành công!")
-            st.rerun()
 
 
 # Ensure session is initialized
