@@ -210,6 +210,15 @@ Direct tool test (verifies the bot token/chat only):
 python -c "from tools import TOOL_FUNCTIONS as T; print(T['send']('AI20k test message', confirmed=True))"
 ```
 
+Confirmation smoke test (must NOT hit the network):
+
+```bash
+python -c "from tools import TOOL_FUNCTIONS as T; print(T['send']('draft', confirmed=False)['status'])"
+# -> needs_confirmation
+```
+
+Streamlit UI: sau khi agent chuẩn bị draft, dùng nút **Confirm & Send** / **Cancel** trên tab Live Chat. Model không được tự set `confirmed=true` trong UI path (guard trong `chat.execute_tool_call_with_send_guard`).
+
 ## Final Checklist
 
 Before class, at least one person per group should have:

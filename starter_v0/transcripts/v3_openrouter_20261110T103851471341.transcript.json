@@ -1,0 +1,34 @@
+{
+  "transcript_id": "v3_openrouter_20261110T103851471341",
+  "version": "v3",
+  "artifact_version": "v3+p086c34497b76+t5b22a2476d41",
+  "prompt_hash": "086c34497b76ddeec8dd082a94336c04720b9479955f31bce44296e294edaf1f",
+  "tools_hash": "5b22a2476d41b989d5dc1e54f24ce7890e781909deb2f7afafb856ab53a6d7c0",
+  "provider": "openrouter",
+  "model": "openai/gpt-4o-mini",
+  "system_prompt": "artifacts\\system_prompt.md",
+  "tools": "artifacts\\tools.yaml",
+  "history_window": 5,
+  "max_tool_rounds": 4,
+  "created_at": "2026-11-10T10:38:51",
+  "updated_at": "2026-11-10T10:39:02",
+  "turns": [
+    {
+      "turn_index": 1,
+      "started_at": "2026-11-10T10:38:51",
+      "user": "node js là gì",
+      "status": "answered",
+      "assistant_text": "Node.js là một môi trường chạy JavaScript bên ngoài trình duyệt, cho phép các lập trình viên sử dụng JavaScript để phát triển ứng dụng máy chủ. Nó được xây dựng trên nền tảng V8 JavaScript Engine của Google Chrome, giúp thực thi mã JavaScript nhanh chóng và hiệu quả.\n\nMột số đặc điểm nổi bật của Node.js bao gồm:\n\n1. **Phiên bản không đồng bộ**: Node.js sử dụng mô hình lập trình không đồng bộ, cho phép xử lý nhiều yêu cầu đồng thời mà không bị chặn.\n\n2. **Sự kiện và callback**: Node.js dựa vào mô hình sự kiện, cho phép lập trình viên xử lý các sự kiện và thực hiện các hàm callback khi có sự kiện xảy ra.\n\n3. **Thư viện phong phú**: Node.js có một hệ sinh thái phong phú với npm (Node Package Manager), cho phép dễ dàng cài đặt và quản lý các thư viện và gói phần mềm.\n\n4. **Phát triển ứng dụng web**: Node.js thường được sử dụng để phát triển các ứng dụng web, API, và dịch vụ microservices.\n\n5. **Khả năng mở rộng**: Node.js dễ dàng mở rộng và có thể xử lý nhiều kết nối đồng thời, làm cho nó phù hợp cho các ứng dụng có lưu lượng truy cập cao.\n\nNode.js đã trở thành một công cụ phổ biến trong phát triển phần mềm, đặc biệt là trong các ứng dụng web hiện đại.",
+      "rounds": [
+        {
+          "round": 1,
+          "assistant_text": "Node.js là một môi trường chạy JavaScript bên ngoài trình duyệt, cho phép các lập trình viên sử dụng JavaScript để phát triển ứng dụng máy chủ. Nó được xây dựng trên nền tảng V8 JavaScript Engine của Google Chrome, giúp thực thi mã JavaScript nhanh chóng và hiệu quả.\n\nMột số đặc điểm nổi bật của Node.js bao gồm:\n\n1. **Phiên bản không đồng bộ**: Node.js sử dụng mô hình lập trình không đồng bộ, cho phép xử lý nhiều yêu cầu đồng thời mà không bị chặn.\n\n2. **Sự kiện và callback**: Node.js dựa vào mô hình sự kiện, cho phép lập trình viên xử lý các sự kiện và thực hiện các hàm callback khi có sự kiện xảy ra.\n\n3. **Thư viện phong phú**: Node.js có một hệ sinh thái phong phú với npm (Node Package Manager), cho phép dễ dàng cài đặt và quản lý các thư viện và gói phần mềm.\n\n4. **Phát triển ứng dụng web**: Node.js thường được sử dụng để phát triển các ứng dụng web, API, và dịch vụ microservices.\n\n5. **Khả năng mở rộng**: Node.js dễ dàng mở rộng và có thể xử lý nhiều kết nối đồng thời, làm cho nó phù hợp cho các ứng dụng có lưu lượng truy cập cao.\n\nNode.js đã trở thành một công cụ phổ biến trong phát triển phần mềm, đặc biệt là trong các ứng dụng web hiện đại.",
+          "tool_calls": [],
+          "tool_results": []
+        }
+      ],
+      "tool_events": [],
+      "ended_at": "2026-11-10T10:39:02"
+    }
+  ]
+}

@@ -14,6 +14,7 @@ if str(ROOT) not in sys.path:
     sys.path.insert(0, str(ROOT))
 
 from chat import (
+    execute_tool_call_with_send_guard,
     now_iso,
     run_model_tool_loop,
     safe_slug,
@@ -22,6 +23,7 @@ from chat import (
 )
 from env_loader import load_lab_env
 from providers import make_provider
+from telegram_delivery import TelegramDeliveryController
 from tools import TOOL_FUNCTIONS, load_tool_declarations, to_openai_tools
 from versioning import artifact_version_dict, build_artifact_version
 
@@ -118,6 +120,10 @@ def init_new_session(
     st.session_state.history = []
     st.session_state.turn_index = 0
     st.session_state.session_key = f"{provider_name}:{model_name or ''}:{artifact_ver.artifact_version}"
+    st.session_state.telegram_ctrl = TelegramDeliveryController()
+    st.session_state.pending_telegram = None
+    st.session_state.telegram_delivery = None
+    st.session_state.telegram_send_lock = False
 
 
 # ---------------- Sidebar ----------------
@@ -216,6 +222,55 @@ if "transcript" not in st.session_state or st.session_state.get("session_key") !
         history_window=int(history_window),
         max_tool_rounds=int(max_tool_rounds),
     )
+if "telegram_ctrl" not in st.session_state:
+    st.session_state.telegram_ctrl = TelegramDeliveryController()
+for _key, _default in (
+    ("pending_telegram", None),
+    ("telegram_delivery", None),
+    ("telegram_send_lock", False),
+):
+    if _key not in st.session_state:
+        st.session_state[_key] = _default
+
+
+def _sync_telegram_session_from_ctrl() -> None:
+    ctrl: TelegramDeliveryController = st.session_state.telegram_ctrl
+    st.session_state.telegram_send_lock = ctrl.send_lock
+    if ctrl.pending_text:
+        st.session_state.pending_telegram = {
+            "text": ctrl.pending_text,
+            "created_at": now_iso(),
+            "source_turn": st.session_state.turn_index,
+        }
+    else:
+        st.session_state.pending_telegram = None
+    if ctrl.last_status:
+        st.session_state.telegram_delivery = {
+            "status": ctrl.last_status,
+            "message": ctrl.last_message,
+            "result": ctrl.last_result,
+        }
+
+
+def _set_pending_telegram_from_result(result: dict[str, Any]) -> None:
+    pending = result.get("pending_send")
+    draft = ""
+    if isinstance(pending, dict):
+        draft = str(pending.get("text") or "")
+    if not draft:
+        for event in reversed(result.get("tool_events") or []):
+            if event.get("tool") != "send":
+                continue
+            tool_result = event.get("result") or {}
+            if isinstance(tool_result, dict) and (
+                tool_result.get("status") == "needs_confirmation"
+                or tool_result.get("awaiting_confirmation")
+            ):
+                draft = str(tool_result.get("text") or (event.get("args") or {}).get("text") or "")
+                break
+    if draft.strip():
+        st.session_state.telegram_ctrl.set_pending(draft)
+        _sync_telegram_session_from_ctrl()
 
 
 def process_user_turn(user_text: str) -> None:
@@ -251,11 +306,14 @@ def process_user_turn(user_text: str) -> None:
             tools=openai_tools,
             model=model_override,
             max_tool_rounds=int(max_tool_rounds),
+            tool_executor=execute_tool_call_with_send_guard,
         )
         turn_record.update(result)
         assistant_text = result["assistant_text"]
         st.session_state.history.append({"role": "user", "content": user_text})
         st.session_state.history.append({"role": "assistant", "content": assistant_text})
+        if result.get("status") == "waiting_for_confirmation":
+            _set_pending_telegram_from_result(result)
     except Exception as exc:
         turn_record.update({
             "status": "provider_error",
@@ -264,6 +322,72 @@ def process_user_turn(user_text: str) -> None:
         })
 
     turn_record["ended_at"] = now_iso()
+    st.session_state.transcript["turns"].append(turn_record)
+    write_transcript(st.session_state.transcript_path, st.session_state.transcript)
+
+
+def confirm_and_send_telegram() -> None:
+    ctrl: TelegramDeliveryController = st.session_state.telegram_ctrl
+    draft = ctrl.pending_text or ""
+    outcome = ctrl.confirm_and_send(TOOL_FUNCTIONS["send"])
+    _sync_telegram_session_from_ctrl()
+
+    st.session_state.turn_index += 1
+    result = outcome.get("result") or {}
+    ok = outcome.get("status") == "sent"
+    skipped = outcome.get("status") == "skipped_duplicate"
+    turn_record: dict[str, Any] = {
+        "turn_index": st.session_state.turn_index,
+        "started_at": now_iso(),
+        "user": "[UI] Confirm & Send Telegram",
+        "status": "telegram_send" if ok else ("telegram_send_skipped" if skipped else "telegram_send_failed"),
+        "assistant_text": (
+            f"✅ Đã gửi Telegram thành công"
+            + (f" (message_id={result.get('message_id')})." if result.get("message_id") else ".")
+            if ok
+            else (
+                "ℹ️ " + str(outcome.get("message"))
+                if skipped
+                else f"❌ Gửi Telegram thất bại: {outcome.get('message')}"
+            )
+        ),
+        "rounds": [],
+        "tool_events": [{
+            "tool": "send",
+            "args": {"text": draft, "confirmed": True},
+            "result": result if result else {"status": outcome.get("status"), "message": outcome.get("message")},
+        }],
+        "ended_at": now_iso(),
+    }
+    if ok or skipped:
+        st.session_state.history.append({"role": "user", "content": "Xác nhận gửi Telegram."})
+        st.session_state.history.append({"role": "assistant", "content": turn_record["assistant_text"]})
+    st.session_state.transcript["turns"].append(turn_record)
+    write_transcript(st.session_state.transcript_path, st.session_state.transcript)
+
+
+def cancel_pending_telegram() -> None:
+    ctrl: TelegramDeliveryController = st.session_state.telegram_ctrl
+    draft_preview = ctrl.pending_text or ""
+    ctrl.cancel()
+    _sync_telegram_session_from_ctrl()
+    st.session_state.turn_index += 1
+    turn_record = {
+        "turn_index": st.session_state.turn_index,
+        "started_at": now_iso(),
+        "user": "[UI] Cancel Telegram Send",
+        "status": "telegram_cancelled",
+        "assistant_text": "Đã hủy gửi Telegram. Không có tin nhắn nào được gửi.",
+        "rounds": [],
+        "tool_events": [{
+            "tool": "send",
+            "args": {"text": draft_preview, "confirmed": False},
+            "result": {"status": "cancelled", "message": "User cancelled before send."},
+        }],
+        "ended_at": now_iso(),
+    }
+    st.session_state.history.append({"role": "user", "content": "Hủy gửi Telegram."})
+    st.session_state.history.append({"role": "assistant", "content": turn_record["assistant_text"]})
     st.session_state.transcript["turns"].append(turn_record)
     write_transcript(st.session_state.transcript_path, st.session_state.transcript)
 
@@ -311,6 +435,10 @@ with tab_chat:
             badge_map = {
                 "answered": "🟢 `answered`",
                 "waiting_for_user": "🟡 `waiting_for_user` (Clarify)",
+                "waiting_for_confirmation": "🟡 `waiting_for_confirmation` (Telegram)",
+                "telegram_send": "🟢 `telegram_send`",
+                "telegram_send_failed": "🔴 `telegram_send_failed`",
+                "telegram_cancelled": "⚪ `telegram_cancelled`",
                 "max_tool_rounds": "🟠 `max_tool_rounds`",
                 "provider_error": "🔴 `provider_error`",
             }
@@ -325,8 +453,60 @@ with tab_chat:
                         if r.get("tool_results"):
                             st.markdown("*Tool Results:*")
                             st.json(r["tool_results"])
+            elif turn.get("tool_events"):
+                with st.expander(f"🔧 Tool Events ({len(turn['tool_events'])})", expanded=False):
+                    st.json(turn["tool_events"])
 
             st.markdown(turn.get("assistant_text") or "_(Không có nội dung phản hồi)_")
+
+    pending = st.session_state.get("pending_telegram")
+    delivery = st.session_state.get("telegram_delivery")
+    if pending or delivery:
+        st.divider()
+        st.markdown("### 📨 Telegram Bonus Delivery")
+        tg_token_ok = bool(os.getenv("TELEGRAM_BOT_TOKEN"))
+        tg_chat_ok = bool(os.getenv("TELEGRAM_CHAT_ID"))
+        st.caption(
+            f"Config: {'✅' if tg_token_ok else '⚪'} `TELEGRAM_BOT_TOKEN` · "
+            f"{'✅' if tg_chat_ok else '⚪'} `TELEGRAM_CHAT_ID`"
+        )
+        if delivery:
+            status = delivery.get("status")
+            if status == "sent":
+                st.success(delivery.get("message") or "Sent.")
+            elif status == "cancelled":
+                st.info(delivery.get("message") or "Cancelled.")
+            elif status == "awaiting_confirmation":
+                st.warning(delivery.get("message") or "Awaiting confirmation.")
+            elif status == "skipped_duplicate":
+                st.info(delivery.get("message") or "Duplicate send blocked.")
+            else:
+                st.error(delivery.get("message") or "Telegram delivery error.")
+        if pending:
+            st.markdown("**Nội dung chuẩn bị gửi:**")
+            st.text_area(
+                "Draft",
+                value=str(pending.get("text") or ""),
+                height=180,
+                disabled=True,
+                label_visibility="collapsed",
+                key=f"tg_draft_{pending.get('created_at', 'x')}",
+            )
+            c_confirm, c_cancel = st.columns(2)
+            with c_confirm:
+                if st.button(
+                    "✅ Confirm & Send",
+                    use_container_width=True,
+                    type="primary",
+                    disabled=bool(st.session_state.get("telegram_send_lock")),
+                    key="tg_confirm_send",
+                ):
+                    confirm_and_send_telegram()
+                    st.rerun()
+            with c_cancel:
+                if st.button("❌ Cancel", use_container_width=True, key="tg_cancel_send"):
+                    cancel_pending_telegram()
+                    st.rerun()
 
     user_input = st.chat_input("Nhập yêu cầu nghiên cứu (ví dụ: Tin AI hôm nay, tweet của @sama, đọc URL, gửi Telegram...)")
     active_query = triggered_prompt or user_input
