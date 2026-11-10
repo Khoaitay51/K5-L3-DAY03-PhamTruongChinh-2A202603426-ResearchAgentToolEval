@@ -3,5 +3,159 @@
   "dataset_role": "group",
   "description": "Case do NHÓM tự viết thêm để cover thêm trường hợp. Mỗi case cần: id, phase='B', query HOẶC turns, failure_type (thuộc allowed_failure_types), và expect (tool_calls[...] hoặc no_tool=true). Nên kèm metadata.what_it_tests.",
   "allowed_failure_types": ["wrong_tool", "wrong_arg_value", "wrong_boundary", "unnecessary_tool", "out_of_scope", "missing_info"],
-  "cases": []
+  "cases": [
+    {
+      "id": "G01_karpathy_timeline",
+      "phase": "B",
+      "suite": "group",
+      "query": "Cho mình xem tweet mới nhất của Andrej Karpathy",
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "timeline", "args": {"screenname": "karpathy"}}]},
+      "metadata": {
+        "skill": "routing_name_to_handle_karpathy",
+        "difficulty": "medium",
+        "what_it_tests": "Tweet CỦA Andrej Karpathy → map tên thành handle karpathy rồi gọi timeline (không social_search)."
+      }
+    },
+    {
+      "id": "G02_arxiv_papers_routing",
+      "phase": "B",
+      "suite": "group",
+      "query": "Tìm 3 paper arXiv về tool-calling evaluation cho LLM agents",
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "papers", "args": {"max_results": 3}}]},
+      "metadata": {
+        "skill": "routing_arxiv_papers",
+        "difficulty": "medium",
+        "what_it_tests": "Yêu cầu paper/preprint arXiv → route đúng tool papers (tool mới), không dùng lookup web."
+      }
+    },
+    {
+      "id": "G03_policy_data_privacy",
+      "phase": "B",
+      "suite": "group",
+      "query": "Theo policy công ty, có được paste API key khách hàng vào prompt AI không?",
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "policy", "args": {"policy_area": "data_privacy"}}]},
+      "metadata": {
+        "skill": "routing_company_policy_privacy",
+        "difficulty": "medium",
+        "what_it_tests": "Câu hỏi nội bộ về API key/dữ liệu khách → policy(data_privacy), không lookup web."
+      }
+    },
+    {
+      "id": "G04_latest_search_type",
+      "phase": "B",
+      "suite": "group",
+      "query": "Tìm các tweet mới nhất về Claude 4 trên Twitter",
+      "failure_type": "wrong_arg_value",
+      "expect": {"tool_calls": [{"name": "social_search", "args": {"query": "Claude 4", "search_type": "Latest"}}]},
+      "metadata": {
+        "skill": "arg_search_type_latest",
+        "difficulty": "medium",
+        "what_it_tests": "'mới nhất' → search_type=Latest (không phải Top); query giữ chủ đề Claude 4."
+      }
+    },
+    {
+      "id": "G05_publish_confirm_yes_no",
+      "phase": "B",
+      "suite": "group",
+      "query": "Post digest AI vừa rồi lên kênh Telegram giúp mình luôn",
+      "failure_type": "wrong_boundary",
+      "expect": {"tool_calls": [{"name": "clarify", "args": {"response_type": "yes_no"}}]},
+      "metadata": {
+        "skill": "confirm_before_telegram_publish",
+        "difficulty": "medium",
+        "what_it_tests": "Side-effect publish/post Telegram → bắt buộc clarify(yes_no) trước, không send ngay."
+      }
+    },
+    {
+      "id": "G06_multiturn_papers_then_read",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {"role": "user", "content": "Tìm paper arXiv về retrieval augmented generation"},
+        {"role": "user", "content": "Thôi, đọc luôn paper 1706.03762 giúp mình"},
+        {"role": "user", "content": "Chỉ lấy 2 trang đầu thôi"}
+      ],
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "paper_text", "args": {"arxiv_url": "1706.03762", "max_pages": 2}}]},
+      "metadata": {
+        "skill": "multiturn_switch_to_paper_text",
+        "difficulty": "hard",
+        "what_it_tests": "3 turns: bỏ search papers, chuyển sang paper_text với ID 1706.03762 và max_pages=2."
+      }
+    },
+    {
+      "id": "G07_multiturn_policy_then_news",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {"role": "user", "content": "Theo policy, đăng Telegram có cần confirm không?"},
+        {"role": "user", "content": "Ok hiểu rồi. Giờ tìm tin AI hôm nay trên web giúp mình"},
+        {"role": "user", "content": "Chủ đề là AI agents, vẫn là tin hôm nay"}
+      ],
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [{"name": "lookup", "args": {"query": "AI agents", "topic": "news", "timeframe": "day"}}]},
+      "metadata": {
+        "skill": "multiturn_switch_policy_to_news",
+        "difficulty": "hard",
+        "what_it_tests": "3 turns: bỏ policy, chuyển sang lookup news với query AI agents + timeframe=day; không gọi lại policy."
+      }
+    },
+    {
+      "id": "G08_multiturn_missing_handle_then_sama",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {"role": "user", "content": "Lấy giúp mình vài tweet mới nhất"},
+        {"role": "user", "content": "Của Sam Altman"},
+        {"role": "user", "content": "Đúng 7 tweet thôi nhé"}
+      ],
+      "failure_type": "missing_info",
+      "expect": {"tool_calls": [{"name": "timeline", "args": {"screenname": "sama", "limit": 7}}]},
+      "metadata": {
+        "skill": "multiturn_clarify_fill_sama_limit",
+        "difficulty": "hard",
+        "what_it_tests": "3 turns: sau khi có tên Sam Altman → handle sama, limit=7 từ turn cuối."
+      }
+    },
+    {
+      "id": "G09_multiturn_top_then_correct_latest",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {"role": "user", "content": "Cho tweet phổ biến nhất về Gemini"},
+        {"role": "user", "content": "À nhầm, mình muốn tweet mới nhất về Gemini"},
+        {"role": "user", "content": "Vẫn chủ đề Gemini, search_type Latest nhé"}
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {"tool_calls": [{"name": "social_search", "args": {"query": "Gemini", "search_type": "Latest"}}]},
+      "metadata": {
+        "skill": "multiturn_correct_search_type",
+        "difficulty": "hard",
+        "what_it_tests": "3 turns: sửa Top→Latest, giữ query Gemini, chỉ social_search."
+      }
+    },
+    {
+      "id": "G10_multiturn_two_urls_parallel",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {"role": "user", "content": "Mình có 2 link cần đọc"},
+        {"role": "user", "content": "https://openai.com/blog/gpt-5 và https://anthropic.com/news/claude"},
+        {"role": "user", "content": "Đọc cả hai URL đó giúp mình"}
+      ],
+      "failure_type": "wrong_tool",
+      "expect": {"tool_calls": [
+        {"name": "fetch", "args": {"url": "https://openai.com/blog/gpt-5"}},
+        {"name": "fetch", "args": {"url": "https://anthropic.com/news/claude"}}
+      ]},
+      "metadata": {
+        "skill": "multiturn_parallel_fetch_two_urls",
+        "difficulty": "hard",
+        "what_it_tests": "3 turns: latest yêu cầu đọc cả 2 URL → gọi fetch song song cho đúng 2 link."
+      }
+    }
+  ]
 }

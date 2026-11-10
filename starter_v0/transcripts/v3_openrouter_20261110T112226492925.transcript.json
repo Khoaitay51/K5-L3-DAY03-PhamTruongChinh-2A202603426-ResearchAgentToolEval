@@ -1,0 +1,80 @@
+{
+  "transcript_id": "v3_openrouter_20261110T112226492925",
+  "version": "v3",
+  "artifact_version": "v3+p933b11f24ccb+t0fb36ba058b9",
+  "prompt_hash": "933b11f24ccbf115e9537b0966362a2f7c84c8afcc6f27a9e2e7a9572130e609",
+  "tools_hash": "0fb36ba058b937cb60eb7a786d2f94c15f72d654d8e964864e98c05ad138aefc",
+  "provider": "openrouter",
+  "model": "openai/gpt-4o-mini",
+  "system_prompt": "artifacts\\system_prompt.md",
+  "tools": "artifacts\\tools.yaml",
+  "history_window": 5,
+  "max_tool_rounds": 4,
+  "created_at": "2026-11-10T11:22:26",
+  "updated_at": "2026-11-10T11:22:54",
+  "turns": [
+    {
+      "turn_index": 1,
+      "started_at": "2026-11-10T11:22:50",
+      "user": "Tin AI hôm nay có gì nổi bật?",
+      "status": "answered",
+      "assistant_text": "Hiện tại, tôi không thể truy cập thông tin tin tức về AI do một lỗi kỹ thuật. Tuy nhiên, bạn có thể kiểm tra các nguồn tin tức lớn như TechCrunch, Wired, hoặc MIT Technology Review để cập nhật thông tin mới nhất về AI. Nếu bạn có một chủ đề cụ thể trong lĩnh vực AI mà bạn muốn tìm hiểu, hãy cho tôi biết!",
+      "rounds": [
+        {
+          "round": 1,
+          "assistant_text": null,
+          "tool_calls": [
+            {
+              "name": "lookup",
+              "args": {
+                "query": "AI",
+                "topic": "news",
+                "timeframe": "day",
+                "max_results": 5
+              }
+            }
+          ],
+          "tool_results": [
+            {
+              "tool": "lookup",
+              "args": {
+                "query": "AI",
+                "topic": "news",
+                "timeframe": "day",
+                "max_results": 5
+              },
+              "result": {
+                "tool": "web_search",
+                "error": "RuntimeError",
+                "message": "Missing TAVILY_API_KEY env var"
+              }
+            }
+          ]
+        },
+        {
+          "round": 2,
+          "assistant_text": "Hiện tại, tôi không thể truy cập thông tin tin tức về AI do một lỗi kỹ thuật. Tuy nhiên, bạn có thể kiểm tra các nguồn tin tức lớn như TechCrunch, Wired, hoặc MIT Technology Review để cập nhật thông tin mới nhất về AI. Nếu bạn có một chủ đề cụ thể trong lĩnh vực AI mà bạn muốn tìm hiểu, hãy cho tôi biết!",
+          "tool_calls": [],
+          "tool_results": []
+        }
+      ],
+      "tool_events": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "AI",
+            "topic": "news",
+            "timeframe": "day",
+            "max_results": 5
+          },
+          "result": {
+            "tool": "web_search",
+            "error": "RuntimeError",
+            "message": "Missing TAVILY_API_KEY env var"
+          }
+        }
+      ],
+      "ended_at": "2026-11-10T11:22:54"
+    }
+  ]
+}
