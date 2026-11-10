@@ -1,0 +1,28 @@
+{
+  "transcript_id": "v3_openai_20261110T102803754482",
+  "version": "v3",
+  "artifact_version": "v3+peb1c8179815b+t5b22a2476d41",
+  "prompt_hash": "eb1c8179815bd79d34de7d326420bb99b3072e6e8ae96464c02d4411f905fc68",
+  "tools_hash": "5b22a2476d41b989d5dc1e54f24ce7890e781909deb2f7afafb856ab53a6d7c0",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "system_prompt": "artifacts\\system_prompt.md",
+  "tools": "artifacts\\tools.yaml",
+  "history_window": 5,
+  "max_tool_rounds": 4,
+  "created_at": "2026-11-10T10:28:03",
+  "updated_at": "2026-11-10T10:28:11",
+  "turns": [
+    {
+      "turn_index": 1,
+      "started_at": "2026-11-10T10:28:10",
+      "user": "m ăn cứt",
+      "status": "provider_error",
+      "assistant_text": "⚠️ Lỗi kết nối Provider (UnicodeEncodeError): 'charmap' codec can't encode character '\\U0001f527' in position 0: character maps to <undefined>",
+      "rounds": [],
+      "tool_events": [],
+      "error": "UnicodeEncodeError: 'charmap' codec can't encode character '\\U0001f527' in position 0: character maps to <undefined>",
+      "ended_at": "2026-11-10T10:28:11"
+    }
+  ]
+}

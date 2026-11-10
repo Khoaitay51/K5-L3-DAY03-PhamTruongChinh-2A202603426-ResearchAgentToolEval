@@ -54,7 +54,7 @@ Fill from `artifacts/version_log.csv` and `runs/*.json`.
 
 | Version | Changed Artifact | Hypothesis | Metric Before | Metric After | Run File |
 |---|---|---|---:|---:|---|
-| v0 | baseline |  |  |  |  |
+| v0 | baseline | Đo hành vi chưa tối ưu trước khi sửa | - | 0.75 | `runs/v0_B_base_openrouter_20261110T101854161775.json` |
 | v1 |  |  |  |  |  |
 | v2 |  |  |  |  |  |
 | v3 |  |  |  |  |  |
@@ -65,7 +65,11 @@ Use actual failures from `results[*].result.failures`.
 
 | Case ID | Failure Type | Actual Tool Calls | What Failed | Fix |
 |---|---|---|---|---|
-|  |  |  |  |  |
+| `R08_out_of_scope` | `out_of_scope` | `send(text="Nguyên hàm của x^2 là...")` | `expected no tool call` (`unexpected_tool_call`): câu hỏi giải tích ngoài phạm vi research nhưng model gọi `send` để gửi câu trả lời đi | Thêm rule ngoài phạm vi (`out_of_scope`) vào `system_prompt.md` (từ chối/không gọi tool) và làm rõ mô tả `send` trong `tools.yaml` |
+| `R10_missing_handle` | `missing_info` | `timeline(screenname="sama")` | `missing tool call clarify; extra tool call timeline` (`missing_tool_call`): prompt starter xúi đoán bừa Sam Altman khi thiếu tên tài khoản | Xoá chỉ dẫn đoán mò trong `system_prompt.md`, yêu cầu gọi `clarify(response_type="text")` khi thiếu handle/tài khoản |
+| `R11_missing_url` | `missing_info` | `fetch(url="https://example.com/article")` | `missing tool call clarify; extra tool call fetch` (`missing_tool_call`): prompt starter xúi tự đoán URL khi user chỉ nói "bài viết này" | Xoá chỉ dẫn đoán URL trong `system_prompt.md`, yêu cầu gọi `clarify(response_type="text")` khi thiếu URL cụ thể |
+| `R12_confirm_before_send` | `wrong_boundary` | `send(text="Bản tin này đã được đăng lên Telegram.")` | `missing tool call clarify; extra tool call send` (`missing_tool_call`): prompt starter bảo gửi ngay không cần hỏi xác nhận | Sửa `system_prompt.md` và `tools.yaml`: bắt buộc gọi `clarify(response_type="yes_no")` để xin xác nhận trước khi gọi `send` |
+| `R13_parallel_web_and_tweets` | `wrong_tool` | `lookup(query="AI news", timeframe="day")`, `social_search(query="AI", search_type="Latest", limit=5)` | `query: expected 'AI', got 'AI news'; topic: expected 'news', got None` (`wrong_arg_value`): gọi `lookup` tìm tin tức nhưng gộp chữ "news" vào `query` thay vì truyền `topic="news"` và `query="AI"` | Ghi rõ convention của `lookup` trong `tools.yaml` và `system_prompt.md`: khi tìm tin tức thời sự phải đặt `topic="news"` và giữ `query` là chủ đề gốc (`"AI"`), không nhét từ `"news"`/`"tin tức"` vào `query` |
 
 ## B3. Team Eval Cases
 

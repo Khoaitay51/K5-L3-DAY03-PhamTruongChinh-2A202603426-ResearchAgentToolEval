@@ -1,1 +1,2 @@
 version,author,changed_artifact,artifact_version,prompt_hash,tools_hash,reason,hypothesis,metric_before,metric_after,run_file
+v0,PhamTruongChinh,baseline,v0+pf0c107a9d7a1+t8db0ba629f52,f0c107a9d7a1,8db0ba629f52,baseline,Đo hành vi chưa tối ưu trước khi sửa,,0.75,runs/v0_B_base_openrouter_20261110T101854161775.json
