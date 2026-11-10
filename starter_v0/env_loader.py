@@ -22,5 +22,7 @@ def load_lab_env(root: Path) -> None:
     external_path = os.getenv("DAY04_ENV_FILE")
     if external_path:
         load_dotenv(Path(external_path).expanduser())
-        return
-    load_dotenv(root / ".env")
+    else:
+        load_dotenv(root / ".env")
+    if os.getenv("DOCKER_OLLAMA_BASE_URL"):
+        os.environ["OLLAMA_BASE_URL"] = os.environ["DOCKER_OLLAMA_BASE_URL"]

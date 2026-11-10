@@ -1,0 +1,89 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: research-ollama
+    ports:
+      - "${OLLAMA_PORT:-11434}:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+    restart: unless-stopped
+
+  agent:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: research-agent
+    command: ["python", "api_server.py", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "${AGENT_PORT:-8000}:8000"
+    stdin_open: true
+    tty: true
+    env_file:
+      - ./.env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - OLLAMA_BASE_URL=http://ollama:11434/v1
+      - DOCKER_OLLAMA_BASE_URL=http://ollama:11434/v1
+    volumes:
+      - .:/app
+    depends_on:
+      - ollama
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  streamlit:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: research-streamlit
+    command: ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.headless=true"]
+    ports:
+      - "${STREAMLIT_PORT:-8501}:8501"
+    env_file:
+      - ./.env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - OLLAMA_BASE_URL=http://ollama:11434/v1
+      - DOCKER_OLLAMA_BASE_URL=http://ollama:11434/v1
+    volumes:
+      - .:/app
+    depends_on:
+      - ollama
+      - agent
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8501/_stcore/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  # Tuỳ chọn: Mở Cloudflare Tunnel cho Streamlit bằng lệnh:
+  # docker compose --profile tunnel up -d
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: research-tunnel
+    profiles:
+      - tunnel
+    command: tunnel --no-autoupdate --url http://streamlit:8501
+    depends_on:
+      - streamlit
+    restart: unless-stopped
+
+volumes:
+  ollama_data:
