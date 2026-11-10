@@ -43,9 +43,9 @@ Bonus:
 Đánh dấu khi xong. Mỗi dòng trỏ tới file cần sửa và bằng chứng cần nộp.
 
 **Setup**
-- [ ] `.env` có provider key + `TAVILY_API_KEY`, `FIRECRAWL_API_KEY`, `RAPIDAPI_KEY`
-- [ ] `python scripts/preflight_provider.py --provider openrouter` pass
-- [ ] `pytest` chạy được: contract test + example test xanh, TODO test đang `skipped`
+- [x] `.env` có provider key + `TAVILY_API_KEY`, `FIRECRAWL_API_KEY`, `RAPIDAPI_KEY`
+- [x] `python scripts/preflight_provider.py --provider openrouter` pass
+- [x] `pytest` chạy được: contract test + example test xanh, TODO test đang `skipped`
 
 **Prompt & tool declaration**
 - [ ] Chạy baseline `v0`, ghi vào `artifacts/version_log.csv`

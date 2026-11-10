@@ -1,0 +1,1184 @@
+{
+  "run_id": "v1_B_base_openai_20261110T142110148427",
+  "version": "v1",
+  "artifact_version": "v1+p832dd0b3a379+t5c53b924cc3d",
+  "prompt_hash": "832dd0b3a37940b701afca17b2ceab6536ecd1fd6efe7158eb221c0bee7acf87",
+  "tools_hash": "5c53b924cc3de5695892a6b3d9e061bc6a4e3a670fa898a90af572a087045f03",
+  "phase": "B",
+  "suite": "base",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "system_prompt": "G:\\My Drive\\VinUni\\Lab 3\\K5-L3-DAY03-PhamTruongChinh-2A202603426-ResearchAgentToolEval\\starter_v0\\artifacts\\system_prompt.md",
+  "tools": "G:\\My Drive\\VinUni\\Lab 3\\K5-L3-DAY03-PhamTruongChinh-2A202603426-ResearchAgentToolEval\\starter_v0\\artifacts\\tools.yaml",
+  "eval_cases": "data\\eval_base.json",
+  "dataset_id": "day04_v2_research_base",
+  "dataset_role": "base",
+  "description": "Core eval cho research agent: routing đúng tool + đúng args, hỏi lại khi thiếu (ask_user), xác nhận trước khi gửi, và xử lý câu ngoài phạm vi / không cần tool. Chấm trên tool_calls + args (subset). KHÔNG sửa file này — chỉ thêm case vào eval_group.json.",
+  "generated_at": "2026-11-10T14:21:10",
+  "summary": {
+    "total_cases": 20,
+    "measured_cases": 5,
+    "provider_error_cases": 15,
+    "passed_cases": 5,
+    "case_accuracy": 1.0,
+    "tool_routing_accuracy": 1.0,
+    "argument_accuracy": 1.0,
+    "multiturn_accuracy": null,
+    "failure_counts": {},
+    "observed_mismatch_counts": {}
+  },
+  "results": [
+    {
+      "id": "R01_user_tweets_routing",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "routing_user_tweets_name_to_handle",
+        "difficulty": "medium",
+        "what_it_tests": "Tin CỦA một người nổi tiếng → map tên Sam Altman thành handle sama rồi gọi get_user_tweets."
+      },
+      "input": "Tweet mới nhất của Sam Altman là gì?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "sama"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "sama",
+              "limit": 1
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "timeline",
+          "args": {
+            "screenname": "sama",
+            "limit": 1
+          },
+          "result": {
+            "tool": "get_user_tweets",
+            "screenname": "sama",
+            "items": [
+              {
+                "title": "RT @fouadmatin: Today’s GPT-6 Cyber release is a meaningful step for defenders: stronger vulnerability research and bett",
+                "summary": "RT @fouadmatin: Today’s GPT-6 Cyber release is a meaningful step for defenders: stronger vulnerability research and better alignment. We’ve…",
+                "url": "https://x.com/sama/status/2118471941002842341",
+                "source": "@sama",
+                "date": "Thu Nov 05 22:34:04 +0000 2026",
+                "metrics": {
+                  "favorites": 0,
+                  "retweets": 53,
+                  "views": "47432"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "R02_search_tweets_routing",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "routing_search_tweets",
+        "difficulty": "easy",
+        "what_it_tests": "Tweet theo CHỦ ĐỀ → search_tweets, không phải get_user_tweets."
+      },
+      "input": "Mọi người đang bàn gì về GPT-5 trên Twitter?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "social_search",
+            "args": {}
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "social_search",
+            "args": {
+              "query": "GPT-5",
+              "search_type": "Top"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "social_search",
+          "args": {
+            "query": "GPT-5",
+            "search_type": "Top"
+          },
+          "result": {
+            "tool": "search_tweets",
+            "query": "GPT-5",
+            "search_type": "Top",
+            "items": [
+              {
+                "title": "My kids and I literally built our own Roblox game with AI.",
+                "summary": "My kids and I literally built our own Roblox game with AI.\n\nAnd I didn't write a SINGLE line of code.\n\nWe turned their imagination into an actual playable game.\n\nHere's how we did it. Bookmark this 👇\n\n1. The idea: Brainstormed with my kids, then refined the concept with Claude Opus 5.5.\n\n2. The game: Connected Claude to Roblox Studio using Roblox MCP. Claude helped build the game from our ideas.\n\n3. The characters: Created our own 3D beasts using Tripo AI.\n\n4. The animations: Used Claude + Blender MCP to rig the beasts so they could move.\n\n5. The visuals: Generated images and textures with GPT Images 2.5.\n\n6. The testing: Played the game together, found bugs, asked Claude to fix them, and kept improving it.\n\nNo traditional coding.\n\nJust ideas, AI tools, and a lot of trial and error.\n\nThe best part? Watching my kids see their ideas come to life in a game they can actually play.\n\nWe called it Capture A Beast.\n\nGo try it and tell us what you think!\n\nPlay link in the first reply 👇",
+                "url": "https://x.com/minchoi/status/2119468509184901327",
+                "source": "@minchoi",
+                "date": "Sun Nov 08 16:34:05 +0000 2026",
+                "metrics": {
+                  "favorites": 97,
+                  "retweets": 6,
+                  "views": "20496"
+                }
+              },
+              {
+                "title": "walkable 5 km forest in Unreal Engine 5 with Gpt-6 Astra + C++..",
+                "summary": "walkable 5 km forest in Unreal Engine 5 with Gpt-6 Astra + C++..\n\nthe trick is prototyping small and scaling up. here’s the workflow:\n\n- step 1: have astra prototype a 100m x 100m patch of forest first\n- step 2: write the forest rules in c++: tree spacing, paths, streams, rocks, grass density\n- step 3: add the details: stream beds with river stones, fallen logs, ferns, a pond, a bench\n- step 4: walk it with the default unreal mannequin and fix anything that looks off up close\n- step 5: once the 100m patch feels right, expand the same rules to 5km x 5km\n- step 6: let unreal’s built-in lighting do the heavy lifting: sun through the trees, shade, time of day\n- step 7: add movement like tree climbing, then test it from every angle\n\nif the small patch looks fake, the big one will look fake 2,500 times over (dev: awasemiso＋)",
+                "url": "https://x.com/rewind02/status/2116863272330608921",
+                "source": "@rewind02",
+                "date": "Sun Nov 01 12:01:48 +0000 2026",
+                "metrics": {
+                  "favorites": 566,
+                  "retweets": 43,
+                  "views": "54826"
+                }
+              },
+              {
+                "title": "F*CKING GENIUS...",
+                "summary": "F*CKING GENIUS...\n\nthis guy took the classic \"what if\" concept and turned it into 2D Roblox animations.\n\nhis VERY FIRST video pulled 1.3M views, and he already monetized the entire channel.\n\nso I recreated the exact format using Claude Opus, entirely with code, for $0.\n\nand I'm dropping the full prompt for FREE.\n\nbarely anyone is doing this format right now.\n\nthank me later for this 👇\n\n<ROLE>\n\nYou are my AI animation studio, Roblox animation director, scriptwriter, character designer, motion graphics engineer, and video production specialist.\n\nYour job is to create high-quality, fully animated Roblox-style YouTube Shorts similar in production style, pacing, storytelling, and visual polish to my attached reference video.\n\nI want real character animation, not AI-generated still images with basic zoom effects.\n\nYou will handle the entire production workflow using Claude Code, Python, JavaScript, HTML Canvas, SVG, FFmpeg, and any necessary image and audio tools.\n\nYour goal: Create an original, entertaining 45–55 second Roblox animated Short that feels like a professionally edited cartoon.\n\nThe reference is for understanding animation techniques, not for copying its characters, footage, dialogue, or exact storyline.\n\nBefore generating assets, show me the script, storyboard, and production plan.\n\nBefore rendering the final video, show me an animated preview and wait for approval.\n\n<STEP 1 — ANALYZE MY REFERENCE VIDEO>\n\nFirst, inspect the MP4 file I attached.\n\nUse FFprobe to identify:\n\nResolution\n\nFrame rate\nDuration\nAudio streams\nVideo encoding\nExtract frames at regular intervals, plus additional frames around major scene changes.\n\nCreate a contact sheet showing the entire video.\n\nAnalyze:\n\nCharacter design\n\nBackground illustration style\nFacial expressions\nCharacter movement\nScene composition\nCamera movements\nTransitions\nSubtitle placement\nSubtitle animation\nColor grading\nGaming HUD elements\nStorytelling rhythm\nAverage scene duration\nSound effects and narration timing\nIf speech transcription is available, transcribe the narration and estimate the words spoken per minute.\n\nDo not assume the narration from the subtitles alone.\n\nREFERENCE CHARACTERISTICS\n\nThe reference runs approximately 50 seconds at 1080×1920 and 60 FPS.\n\nIt features:\n\n2D blocky Roblox-inspired cartoon characters\n\nClean dark outlines around characters and objects\nSimple geometric bodies\nLarge square or rounded-square heads\nExaggerated expressions\nBright, saturated colors\nStylized Roblox game worlds\nCartoon bedroom environments\nOversized virtual-game interfaces\nA persistent countdown timer\nDramatic close-ups\nComedic reactions\nFast-paced editing\nAnimated word-by-word captions\nThe storytelling alternates between a real-world family situation and increasingly ridiculous events inside a virtual Roblox-style world.\n\nThe narrative uses a countdown to create urgency, then escalates through rewards, power-ups, transformations, characters reacting, and an unexpected ending.\n\nIdentify the specific techniques that make these sequences engaging.\n\nRecreate those techniques using original assets.\n\n<STEP 2 — ASK ME FOR MY STORY>\n\nBefore production, ask me:\n\n1. What should the video be about?\n\nExamples:\n\nWhat If Dad Deleted Your Roblox Account?\n\nWhat If You Had Unlimited Robux for 10 Seconds?\n\nWhat If Every Roblox Game Combined Into One?\nWhat If You Became the Richest Noob?\nWhat If Your Roblox Character Could Talk?\nWhat If You Had One Minute to Escape Roblox?\nIf I don't have a topic, suggest five original story ideas with strong hooks.\n2. Which voice generation tool should we use?\n\nOptions:\n\nElevenLabs\n\nKokoro\n\nOther available text-to-speech service\n3. Which asset generation tools are available?\nOptions:\n\nGPT Image\n\nAnother reference-capable image model\n\nFully programmatic SVG/vector illustration\nPrefer code-generated reusable vector assets for elements requiring consistent animation.\nOnly use image generation for assets that cannot be efficiently illustrated in code.\n\nDo not begin production until I approve the concept.\n\n<STEP 3 — SCRIPT STRUCTURE>\n\nWrite an original 45–55 second script.\n\nTarget approximately 135–165 words, adjusted to the chosen narrator's natural speaking speed.\n\nThe storytelling must feel fast, funny, and unpredictable.\n\nUse short sentences.\n\nMake every sentence introduce an action, joke, reveal, or consequence.\n\nAvoid lengthy explanations.\n\nSTORY FORMULA\n\n0–3 seconds — THE HOOK\n\nOpen with an absurd Roblox-related situation.\n\nExample:\n\n\"What if your dad gave you just TEN seconds to become the richest player in Roblox?\"\n\nShow the situation immediately.\n\nNo intro sequence.\n\nNo logos.\n\nNo slow setup.\n\n3–8 seconds — THE RULES\n\nIntroduce the challenge or restriction.\n\nShow the protagonist reacting.\n\nUse an animated timer, warning, or game mechanic to create urgency.\n\n8–15 seconds — THE FIRST WIN\n\nThe main character starts making progress.\n\nShow an entertaining action sequence.\n\nIntroduce the first reward, achievement, or surprise.\n\n15–24 seconds — ESCALATION\n\nIncrease the stakes.\n\nAdd something visually ridiculous:\n\nMassive rewards\n\nA difficult obstacle course\n\nA giant enemy\n\nA strange transformation\nAn unexpected purchase\nA character gaining an absurd ability\nEach new event should be more surprising than the previous one.\n24–33 seconds — THE TWIST\nIntroduce an unexpected problem.\n\nThe protagonist's advantage creates a new challenge.\n\nUse exaggerated character reactions.\n\n33–43 seconds — COUNTDOWN AND PANIC\n\nIncrease the urgency.\n\nShow the character trying to solve the problem.\n\nUse faster cuts, close-ups, ticking sounds, and a changing timer.\n\n43–50 seconds — COMEDIC PAYOFF\n\nDeliver an unexpected outcome that connects to the opening situation.\n\n50–55 seconds — LOOPABLE ENDING\n\nEnd with a funny final line, cliffhanger, or question.\n\nWhere possible, make the last scene visually connect to the beginning so the Short loops naturally.\n\nSCRIPT REQUIREMENTS\n\nEvery line must be visually actionable.\n\nDo not write narration that cannot be shown through animation.\n\nThe protagonist should have a clear objective.\n\nThe story needs at least one surprise and one comedic payoff.\n\nDo not invent real Roblox game features and present them as verified facts. Fictional powers and game mechanics are allowed when clearly part of the story.\n\nProvide the complete script for approval.\n\n<STEP 4 — VISUAL STYLE>\n\nVIDEO SETTINGS\n\nResolution: 1080×1920\n\nAspect ratio: 9:16\n\nFrame rate: 60 FPS\n\nFormat: MP4\n\nTarget duration: 45–55 seconds\n\nART DIRECTION\n\nCreate an original Roblox-inspired 2D cartoon universe.\n\nThe visual language should resemble animated Roblox story Shorts rather than actual recorded Roblox gameplay.\n\nUse:\n\nBlocky geometric bodies\n\nSquare and rounded-square heads\n\nLarge expressive eyes\n\nThick clean character outlines\n\nFlat colors with simple highlights\nSoft shadows\nColorful cartoon environments\nStylized lighting\nRecognizable game-inspired objects\nOversized reaction expressions\nCharacters should look like designed cartoon avatars, not realistic humans.\nAvoid photorealistic renders, generic 3D avatars, anime proportions, or unrelated illustration styles.\nSUGGESTED PALETTE\nNighttime bedroom:\n\nDark navy: #111940\n\nDeep purple: #24225B\n\nWarm interior light: #F2C786\n\nTeal accents: #20BDBB\n\nGame world:\nSky blue: #80CDF5\nBright grass: #65C75A\nOrange: #FF8528\n\nYellow: #FFD447\n\nPink: #FF5B9B\nGaming interface:\nDark charcoal: #222331\nSuccess green: #30CE65\nWarning red: #EE384A\n\nGold: #FFC83D\n\nWhite: #FFFFFF\nUse these as starting colors and refine them against the reference.\nMaintain consistent lighting and colors within each environment.\n<STEP 5 — CHARACTER SYSTEM>\nCreate a consistent original cast.\n\nMAIN CHARACTER\n\nA blocky Roblox-inspired avatar.\n\nDesign requirements:\n\nLarge square head\n\nRecognizable hairstyle\n\nBold outfit color\n\nSimple block torso\n\nRectangular arms\n\nShort blocky legs\nLarge cartoon eyes\nExpressive eyebrows\nAnimated mouth\nThe character's appearance must remain identical in every scene.\nPARENT CHARACTER\nCreate a distinctive adult cartoon avatar.\nUse different hair, clothing, silhouette, and facial features.\nThe parent should be able to show anger, confusion, excitement, surprise, and disbelief.\n\nSIDE CHARACTERS\n\nGenerate additional original avatars as required by the script.\n\nEach side character should be recognizable by silhouette and color.\n\nCHARACTER SHEETS\n\nGenerate or draw each character in:\n\nFront view\n\nSide view\n\nThree-quarter view\n\nBack view\n\nIdle pose\n\nRunning pose\nJumping pose\nSurprised pose\nAngry pose\nHappy pose\nScared pose\nCelebrating pose\nDo not regenerate the entire character for every scene.\nCreate reusable layered assets and rigs.\nCHARACTER RIGGING\nSeparate:\nHead\n\nTorso\n\nLeft arm\n\nRight arm\n\nLeft hand\n\nRight hand\nLeft leg\nRight leg\nHair or accessories\nEyes\nEyebrows\nMouth\nMaintain stable pivot points.\nStore the rig configuration in a reusable data structure.\nAnimations should move the actual body parts rather than only translating a flattened character image.\n<STEP 6 — FACIAL ANIMATION>\nThe characters must be expressive.\n\nCreate reusable facial expressions:\n\nNeutral\n\nSmiling\n\nExcited\n\nSurprised\n\nAngry\n\nSad\n\nCrying\nTerrified\nConfused\nSmug\nScreaming\nLaughing\nEYES\nAnimate blinking approximately every 2.5–4 seconds with slight timing variation.\nAllow eyes to widen during surprises.\nUse eye position changes to communicate attention.\nEYEBROWS\nAnimate eyebrow positions independently.\n\nAngry expressions should use inward-sloping eyebrows.\n\nSurprised expressions should raise the brows.\n\nWorried expressions should use asymmetric curves.\n\nMOUTH\n\nCreate reusable mouth shapes for speech animation.\n\nAt minimum, include:\n\nClosed\n\nSmall open\n\nWide open\n\nRounded\n\nSmile\n\nFrown\n\nTeeth visible\nSynchronize mouth changes with the audio when alignment is available.\nDo not randomly switch expressions.\nExpressions must match the story.\n<STEP 7 — BODY ANIMATION>\nAnimate the characters using proper 2D rigging.\nIDLE\n\nSubtle body bobbing\n\nOccasional blinking\n\nSmall head movement\n\nSlight hand movement\n\nRUNNING\n\nAlternating arm swings\n\nCoordinated leg movement\n\nSlight torso lean\nBody bounce\nFootstep synchronization\nJUMPING\n\nAnticipation crouch\n\nUpward movement\nLegs folding during the jump\nLanding squash\nRecovery motion\nSURPRISE\n\nRapid head movement\n\nEyes widening\nArms extending\nBody leaning backward\nSmall recovery bounce\nANGER\n\nEyebrows lowering\n\nBody leaning forward\nArms raised\nSmall shaking or impact motion\nCELEBRATION\nArms lifting\n\nBody bouncing\n\nHead tilting\nAppropriate particle effects\nUse spring easing and anticipation.\nNever leave a speaking character completely static for several seconds.\n\nAvoid repetitive animation loops when the scene calls for a specific action.\n\n<STEP 8 — BACKGROUNDS>\nCreate reusable environments inspired by the reference's composition and production quality.\nA. BEDROOM\nA cartoon bedroom at night.\n\nInclude:\n\nBed with colorful blanket\n\nBedside table\n\nLamp\n\nWindow\n\nCurtains\n\nPosters\n\nDoor\n\nRug\n\nWarm hallway lighting\nBuild the room with separate layers.\nCharacters should be able to stand in front of the bed, move through the doorway, and interact with objects.\nB. ROBLOX-INSPIRED OBBY WORLD\nCreate a colorful obstacle-course environment.\nInclude:\nFloating platforms\nCheckpoints\nLava\n\nClouds\n\nFinish-line signs\n\nBright geometric obstacles\n\nStage markers\n\nAllow the avatar to jump across platforms.\n\nUse background depth and perspective to create a sense of scale.\nC. GAME SHOP\nCreate a stylized game-store interface with:\nItem panels\nCurrency counter\nBuy buttons\nUpgrade icons\n\nInventory tiles\n\nProgress indicators\n\nThe UI should be readable on a phone screen.\n\nD. CARTOON GAME WORLD\n\nCreate a larger environment containing:\nGrass platforms\nBlocky trees\nPaths\nDecorative buildings\nOther avatars\n\nFloating rewards\n\nParticle effects\n\nDesign additional environments according to the approved script.\n\nDo not create unnecessary locations just to match the reference shot for shot.\n<STEP 9 — GAME INTERFACE DESIGN>\nGame-like UI is an important part of the reference.\nCreate reusable animated interface components.\nCOUNTDOWN TIMER\nPlace a rounded dark timer panel near the top center.\nInclude a stopwatch icon.\n\nDisplay the relevant time remaining.\n\nAt normal time:\n\nDark background, white text.\n\nAt critical time:\n\nRed background, white text.\n\nThe timer should animate when the story calls for it.\n\nTreat the timer as a fictional narrative device. It does not need to count down in real time unless the script specifically requires that.\n\nREWARDS\n\nCreate pop-up reward graphics such as:\n\n+100 coins\n\nLEVEL UP\n\nNEW POWER\n\nSTAGE COMPLETE\n\nLEGENDARY\n\nUNLOCKED\n\nUse animated scale, bounce, and particles.\n\nSHOP INTERFACE\n\nUse:\n\nDark panels\nRounded corners\nGreen ownership indicators\nGold currency indicators\nBright purchase buttons\nClear item names\n\nIMPORTANT\n\nThe interface must remain crisp and readable.\n\nUse code to render interface typography.\n\nDo not depend on AI-generated images for important numbers or text.\nKeep HUD elements consistent between scenes.\n<STEP 10 — CAPTIONS>\nCaptions are a major part of the video's style.\nUse large, bold, animated subtitles in the lower-middle portion of the frame.\nFONT\n\nUse a heavy rounded sans-serif font such as:\n\nMontserrat ExtraBold\n\nFredoka Bold\n\nLilita One\n\nChoose the closest available font after inspecting the reference.\n\nDEFAULT STYLE\n\nText: White\n\nOutline: Thick black\n\nShadow: Subtle dark shadow\n\nAlignment: Center\n\nEMPHASIS COLORS\n\nUse:\nGreen for wins and rewards\nYellow for important objects\n\nRed for danger and urgency\n\nPink for funny or dramatic words\n\nANIMATION\n\nCaptions should follow the actual spoken dialogue.\n\nUse word-level timestamps.\n\nDisplay short phrases rather than long paragraphs.\n\nAnimate emphasized words with:\n\nScale pop\n\nBrief overshoot\nSmall rotation\nBounce\nColor change\n\nKeep words on-screen long enough to read.\n\nNo caption should cover the main character's face.\n\nAvoid placing captions directly underneath important game buttons.\n\nA caption should typically contain one to five words, depending on timing and screen space.\n\n<STEP 11 — CAMERA MOVEMENT>\n\nUse the camera as part of the storytelling.\nCLOSE-UPS\nZoom into the character's face during surprise, anger, or panic.\nWIDE SHOTS\nShow obstacle courses, larger environments, and groups of characters.\n\nQUICK ZOOMS\n\nUse fast zooms for jokes and sudden reveals.\n\nCAMERA SHAKE\n\nUse very short camera shakes during collisions, explosions, and shocking moments.\n\nTRACKING SHOTS\n\nFollow the avatar during running and jumping sequences.\n\nPARALLAX\n\nUse separated background layers to create depth.\n\nDo not simply zoom into an entire still image.\n\nMove the actual characters and environmental objects.\n\nUse faster camera motion during chaotic moments and slower movement during dialogue.\n\n<STEP 12 — TRANSITIONS>\n\nUse fast, story-driven transitions.\n\nInclude:\n\nHard cuts: For most dialogue and location changes.\n\nWhip pans: For sudden changes or rapid movement.\n\nZoom transitions: To enter a game world or highlight a discovery.\n\nImpact cuts: For surprising events.\n\nCharacter wipes: Let a character or object move across the screen to reveal another scene.\n\nFlash frames: Use sparingly for major reveals.\n\nAvoid excessive transitions that make the video difficult to follow.\n\nTarget a new significant visual beat approximately every 1–3 seconds, while allowing longer moments when necessary for a joke or action.\n\n<STEP 13 — PRODUCTION ENGINE>\n\nUse a deterministic animation system.\n\nPreferred tools:\n\nHTML Canvas\n\nJavaScript\n\nSVG\n\nPython\n\nPillow\n\nOpenCV\n\nFFmpeg\n\nPlaywright with Chromium\n\nfaster-whisper when available\n\nlibrosa\n\nNumPy\n\nInstall missing dependencies if the environment permits.\n\nCORE ENGINE\n\nBuild one JavaScript animation project.\nExpose:\nhttps://t.co/KjSvWkCgNW(t)\nREADY\nEND\nEV\nWhere:\nseek(t) renders the video at timestamp t\nREADY indicates all required assets are loaded\nEND is the total duration\nEV stores narration and animation timing events\n\nEvery frame must be reproducible by seeking directly to its timestamp.\n\nDon't build animations that only work when played from the beginning.\n\nREUSABLE FUNCTIONS\n\nCreate functions for:\n\nDrawing characters\n\nUpdating facial expressions\n\nMoving arms\n\nWalking\n\nRunning\n\nJumping\nReacting\nCharacter scaling\nCamera movement\n\nCamera shake\n\nParticle effects\n\nCoin explosions\n\nReward animations\n\nGame UI\nTimer updates\nCaptions\nTransitions\nUse a centralized scene timeline.\nEach scene should specify:\nStart time\nEnd time\nBackground\nCharacter positions\nActions\nCamera behavior\nCaptions\nSound effects\nPERFORMANCE\nPreload reusable assets.\nAvoid expensive image-generation operations during rendering.\n\nCache static background layers.\n\nUse vector graphics for important UI.\n\nRender at 60 FPS.\nUse motion blur selectively on fast movements if performance allows.\n<STEP 14 — VOICE AND AUDIO>\nGenerate voiceover using my selected service.\nUse energetic, expressive narration suitable for short-form gaming stories.\nThe narration should be:\nNatural\nFast but understandable\n\nPlayful\n\nDramatic when necessary\n\nExpressive during surprises\n\nAvoid robotic monotone delivery.\n\nUse distinct authorized voices for different speaking characters if the story includes dialogue.\n\nTIMING\n\nGenerate the audio before final animation.\n\nUse word-level alignment to synchronize:\n\nCaptions\n\nCharacter reactions\n\nMouth movement\n\nScene cuts\n\nReward animations\nTimer changes\nIf the narration is too long, shorten the script before artificially speeding it up.\nSOUND EFFECTS\nAdd appropriate sounds:\n\nCountdown ticks\n\nAlarm sounds\n\nGame jumps\n\nCoin pickups\n\nLevel-up sounds\n\nUI clicks\nSurprise impacts\nCartoon whooshes\nMagical power-ups\nCharacter reactions\nUse licensed or original effects.\n\nMUSIC\n\nUse an energetic background music track suitable for comedic gaming Shorts.\n\nKeep the music quieter than dialogue.\n\nIncrease its intensity during major action sequences where appropriate.\nUse volume ducking during speech.\n<STEP 15 — FIRST APPROVAL CHECKPOINT>\nBefore generating animation assets, show me:\nA. Complete script\nInclude all narration and character dialogue.\nB. Scene-by-scene storyboard\nFor every shot, specify:\nTimestamp\nDuration\n\nDialogue\n\nCharacter action\n\nBackground\n\nCamera movement\n\nCaptions\n\nSound effects\n\nC. Character design plan\n\nShow the proposed protagonist, supporting cast, and their key expressions.\n\nD. Asset list\n\nSpecify exactly which sprites, environments, effects, and UI components must be created.\n\nE. Source and claim review\n\nIdentify any factual statements or references to real Roblox mechanics that need verification.\n\nProvide sources where relevant.\n\nDo not start asset generation until I approve these materials.\n<STEP 16 — PRE-RENDER CHECKPOINT>\nAfter approval, generate the assets and build the animation.\nBefore exporting the final video:\nRender a low-resolution preview using the complete animation timeline.\nProvide:\nA contact sheet with at least 16 frames.\nA preview of the opening 10 seconds.\n\nA preview containing the main action sequence.\n\nA preview of the ending.\n\nA complete low-resolution version when feasible.\n\nCheck:\n\nCharacter consistency\n\nCharacter animation\n\nFacial expressions\n\nBackground quality\n\nCaption timing\n\nCaption readability\n\nGame UI accuracy\n\nCamera movement\n\nSound synchronization\n\nTiming of jokes and surprises\n\nCheck for frozen sprites, misplaced limbs, missing elements, incorrect character positions, unwanted black edges, and frame jumps.\nFix any issues found.\nDo not start the final high-resolution render until I approve the animated preview.\n<STEP 17 — FINAL RENDER>\nOnce approved, render at:\n\nResolution: 1080×1920\n\nFrame rate: 60 FPS\nCodec: H.264\nEncoder: libx264\nCRF: 16–18\nPixel format: yuv420p\nAudio: AAC, 192 kbps\nExport as MP4.\nCheck the exported file for:\nCorrect frame count\nCorrect duration\n\nComplete audio\n\nBlack or corrupted frames\n\nAudio synchronization issues\n\nRendering artifacts\n\nMissing animation frames\n\nUnexpected scene changes\n\nWatch or programmatically inspect the complete exported video before delivery.\n\n<FINAL OUTPUTS>\n\nProvide:\n\n1. final_video.mp4\n\nThe completed vertical animated Short.\n\n2. storyboard.md\n\nThe approved scene-by-scene plan.\n\n3. script.md\n\nThe final narration and dialogue.\n\n4. source_project/\nThe complete editable project containing:\nAnimation source code\nCharacter assets\nBackground assets\nUI components\nAudio assets\nScene timeline\n\nRendering scripts\n\n5. contact_sheets/\n\nThe preview images used for quality control.\n\n6. README.md\n\nInstructions for editing the video and generating more Shorts with the same character and animation system.\n\n<IMPORTANT RULES>\n\nNo static slideshow animation.\n\nCharacters must move through actual animation rigs.\n\nKeep character designs consistent in every scene.\n\nUse original characters and original storylines.\n\nDon't directly reuse artwork or footage from the reference.\n\nMaintain the same visual quality across the whole video.\n\nDon't use unreadable AI-generated text.\nMake captions synchronize with real narration.\nAvoid slow or repetitive scenes.\nUse sound effects to support actions.\nTreat the countdown as part of the story.\nKeep the video understandable without relying entirely on narration.\nPrioritize the first three seconds.\n\nBuild reusable character rigs and environment assets for future videos.\n\nDo not claim to have created a video if you have only generated scripts or images.\n\nIf a required tool or API is unavailable, explain the limitation instead of faking the result.\n\nAlways request approval before final rendering.",
+                "url": "https://x.com/fuckscales/status/2119052238715019425",
+                "source": "@fuckscales",
+                "date": "Sat Nov 07 12:59:58 +0000 2026",
+                "metrics": {
+                  "favorites": 683,
+                  "retweets": 78,
+                  "views": "48085"
+                }
+              },
+              {
+                "title": "i’m shocked i only paid $0.60 for this AI UGC hook + demo.",
+                "summary": "i’m shocked i only paid $0.60 for this AI UGC hook + demo.\n\nleft: original creator (1.3M views - $2k)\nright: AI creator ($0.60)\n\nsave this workflow and let me know what you think:\n\n1. scroll through tiktok and find a viral hook + demo\n\n2. download it without the watermark\n\n3. cut the hook (around 3-5 seconds) with capcut or concut (free)\n\n4. find a pic of a girl on pinterest and ask GPT Image 2.6 to create a new character based on it\n\n5. create a character sheet with this prompt:\n\n“Character turnaround sheet of the person from the reference photo, six views: full body front, side and back + super close-up front, side and back. Strictly keep 100% of face, hair, body, clothing and all details from the reference.\nClean gray background, consistent and natural lighting.”\n\n6. generate the hook with wan 3.0 prime using the 2 references (video + character sheet) and this prompt:\n\n“Replace the girl in {video} with the girl in {character sheet}.\nKeep the same movements, camera quality, voice tone, background sounds, and hand gestures.”\n\n7. use concut to attach the demo to your hook\n\nthis video would cost $2k with a creator, but you can make it for $0.60 using this method.\n\nfollow me for more workflows!",
+                "url": "https://x.com/simonecanciello/status/2118735207402553412",
+                "source": "@simonecanciello",
+                "date": "Fri Nov 06 16:00:12 +0000 2026",
+                "metrics": {
+                  "favorites": 133,
+                  "retweets": 2,
+                  "views": "9851"
+                }
+              },
+              {
+                "title": "Falling snow, stolen kisses, and a love that never stands still.",
+                "summary": "Falling snow, stolen kisses, and a love that never stands still.\n\nCreated with GPT Image 2.6 + Seedance 2.5 on @openart_ai \n\nPrompt:\n\nAUDIO RULE: Natural sound only. No music, no score, no voiceover, no dialogue. Ambient winter city sound and foley only.\n\nMOTION RULE: Continuous movement in every shot. The couple never stop, freeze or hold a pose, and the camera is always moving. Every romantic moment happens while they walk, spin or run.\n\nSTYLE: Hand-painted illustrated look, matching the location reference: soft painterly brush texture, warm amber lamplight against cool lavender-gray snow haze. Same color grade in every shot.\n\nCHARACTER LOCK: <<<image_1>>>  is a single character sheet showing two people. The TOP ROW is the woman and the BOTTOM ROW is the man. Match both exactly in every shot.\nThe woman (top row): messy curly dark-brown hair in a loose updo with loose strands, freckles, small gold hoop earrings. Long dark brown textured wool coat, white collared shirt, charcoal wide-leg trousers, black leather belt, black lace-up boots. She also wears a burgundy fringed wool scarf, as in the location image. She carries a paper cup of tea with the tea-bag tag hanging out.\nThe man (bottom row): tall, tousled wavy dark-brown hair, freckles. Long brown herringbone tweed coat, olive-green fringed scarf, cream cable-knit sweater, dark brown trousers, dark leather boots.\nSCARF LOCK: His olive scarf stays on his neck and her burgundy scarf stays on hers in every shot. Scarves never move between people.\nFaces, hair, outfits, heights and proportions never change between shots. They look at each other with deep affection and never look at the camera.\n\nLOCATION: <<<image_2>>> , snowy Upper West Side at dusk. Gas-style street lamps, snow-covered trees, black iron fences, brownstones with warm lit windows and snowy stoops, a street sign reading \"W 73 St / Broadway\", a yellow taxi, the Empire State Building glowing in the haze. Soft snow falls throughout.\n\nSHOT 1 (0:00-0:03)\nCamera: Wide tracking shot gliding backward ahead of them down the snowy sidewalk, lamps streaking past.\nAction: They walk toward us, his arm around her shoulders, her tea steaming. She leans her head against him while they walk, and he kisses the top of her head without breaking stride. Snow swirls through the lamplight and a yellow taxi slides by behind them.\nSound: Crunching, slushy footsteps, a muffled tire hiss, a soft contented sigh, gentle wind.\n\nHARD CUT\n\nSHOT 2 (0:03-0:06)\nCamera: Medium shot, smooth handheld tracking sideways at walking pace, shallow depth of field.\nAction: Still walking, he opens the front of his coat and pulls her in against his side, wrapping the coat around her shoulder. His olive scarf stays on his neck and her burgundy scarf stays on hers. She laughs, looks up at him, and catches a snowflake on her tongue. He grins and tucks a loose curl behind her ear as they keep moving.\nSound: Her bright laugh, wool rustling, quick footsteps, snow hush.\n\nHARD CUT\n\nSHOT 3 (0:06-0:09)\nCamera: Low tracking shot at hip height, following their hands and the cup as they move, warm window lights streaming past.\nAction: They swing their linked hands as they walk. She lifts the steaming cup to his lips and he sips, smiling at her. Snowflakes melt on his knuckles and her burgundy scarf fringe while the tea-bag tag sways.\nSound: Cup crinkle, a quiet sip, playful breath, soft footsteps, a car passing.\n\nHARD CUT\n\nSHOT 4 (0:09-0:12)\nCamera: Fast but smooth circling orbit around them, snow flying through the foreground.\nAction: He lifts her hand and spins her under his arm. Her coat flares and her curls swing as she twirls, laughing. She spins back into him and they keep moving in a flowing walking waltz down the sidewalk, foreheads close, eyes locked.\nSound: Coat swish, her delighted laugh, quick light footsteps in snow, a distant bell.\n\nHARD CUT\n\nSHOT 5 (0:12-0:15)\nCamera: Sweeping crane move that begins close and rises into a wide pull-back, following them up the avenue with the Empire State Building glowing in the haze.\nAction: Hand in hand, they run a few joyful steps through the falling snow, then he pulls her in and they kiss mid-stride, still moving, her scarf fringe flying. They keep walking away up the avenue, arms around each other, leaving two sets of footprints as the flakes thicken.\nSound: Quick crunching footsteps, a happy laugh, coat rustle, fading into the hush of falling snow.\n\nAVOID: music, dialogue, text overlays, still poses, freeze frames, camera looks, face or hairstyle drift, swapping the two characters' outfits, scarves moving between people, any change to coats, scarves, earrings or boots between shots, photorealistic style.",
+                "url": "https://x.com/ZaraIrahh/status/2119293619282567471",
+                "source": "@ZaraIrahh",
+                "date": "Sun Nov 08 04:59:08 +0000 2026",
+                "metrics": {
+                  "favorites": 206,
+                  "retweets": 32,
+                  "views": "18466"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "R03_web_news_routing",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "routing_web_news",
+        "difficulty": "medium",
+        "what_it_tests": "Tin thời sự trên web → web_search topic=news, timeframe=day (hôm nay)."
+      },
+      "input": "Tin tức AI hôm nay có gì nổi bật?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "AI",
+              "topic": "news",
+              "timeframe": "day"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "AI",
+              "topic": "news",
+              "timeframe": "day"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "AI",
+            "topic": "news",
+            "timeframe": "day"
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "AI",
+            "topic": "news",
+            "timeframe": "day",
+            "items": [
+              {
+                "title": "AI and your job: Threat or opportunity?",
+                "url": "https://www.fox10tv.com/2026/11/10/ai-your-job-threat-or-opportunity",
+                "source": "fox10tv.com",
+                "summary": "MOBILE, Ala. (WALA) - Artificial intelligence is becoming a bigger part of everyday life, raising questions about what the technology could mean for workers and their jobs.\n\nSome economists believe AI poses a particular threat to entry-level and repetitive work, including call center, data entry and junior copywriting jobs, according to The Wall Street Journal. Those tasks may be easier to automate. [...] But AI could also create opportunities. A Bloomberg article points to potential job growth in construction and manufacturing as companies build data centers and produce the chips that power the technology. Some higher-skilled office workers could also benefit if AI helps them become more productive. [...] The long-term impact on jobs remains unclear, but workers can take steps to prepare. Exploring AI chatbots, writing assistants and other tools may help people find ways to work more efficiently and develop skills that complement the technology.",
+                "score": 0.57969785
+              },
+              {
+                "title": "Opinion: AI cannot replace being human – The Battalion",
+                "url": "https://thebatt.com/opinion/opinion-ai-cannot-replace-being-human",
+                "source": "thebatt.com",
+                "summary": "I understand the appeal. College is busy. Between classes, jobs, extracurriculars, leadership positions and trying to maintain some semblance of a social life, there are never enough hours in the day. AI makes things easier. It can generate an outline, rewrite a paragraph, summarize a reading or produce an entire essay before you have even finished your Celsius. But convenience does not necessarily facilitate education. [...] I am not asking anyone to abandon AI. I use it, and I recognize the benefits it provides. But I do think we need to become more conscientious about when we use it and what we are asking it to do for us. Let it help with the tedious tasks. Let it serve as a resource. But do not let it become a substitute for your own intellectual development. [...] There is also something to be said about individuality. AI can generate an argument, imitate a writing style or suggest a creative direction, but our perspectives are developed through our own experiences, disagreements, mistakes and interpretations. The things that make our voices interesting are often the very things that cannot be neatly generated from a prompt. If we constantly rely on the same tools to tell us what to think and how to express it, we risk losing the differences that make",
+                "score": 0.5616957
+              },
+              {
+                "title": "Australia to mandate AI breach reporting, create regulator after OpenAI breach | Reuters",
+                "url": "https://www.reuters.com/world/australia-tightens-ai-oversight-rules-after-openai-agent-breached-government-2026-11-10",
+                "source": "reuters.com",
+                "summary": "However, both companies told Australian parliament last ​month that they would welcome ​laws requiring them to ⁠report data breaches carried out by their AI agents, acknowledging the decision to notify was currently at their discretion.\n\nAlbanese said his centre-left ​Labor government would set up an AI regulator to oversee security ​controls throughout ⁠the development and deployment of AI systems, identify serious risks and conduct independent evaluations of AI models. [...] \"The AI safety regulator will be able to enforce significant penalties for AI companies ⁠doing the ​wrong thing,\" he said.\n\nThe mandatory AI safety and ​security protections will form part of the government's proposed AI legislation, Albanese said, which it plans to introduce in ​Parliament next year.\n\nReporting by Renju Jose in Sydney; Editing by Christian Schmollinger and Saad Sayeed\n\nOur Standards: The Thomson Reuters Trust Principles. [...] Albanese said his government had accepted all recommendations of the ​review.\n\n\"(The recommendations) include mandatory AI company reporting when it comes to misaligned behaviour or cyber ​incidents, and consideration of reforming criminal law in cases of serious misconduct,\" Albanese told reporters.\n\n\"The law needs to get ahead of, and in some cases, make sure that it catches up with what is ​a very fast-changing world.\"",
+                "score": 0.509772
+              },
+              {
+                "title": "Congress’s Permitting Bill Is a ‘Massive Giveaway’ to the AI Data Center Industry, Critics Warn",
+                "url": "https://time.com/article/2026/11/10/permitting-bill-data-centers",
+                "source": "time.com",
+                "summary": "The bill’s advocates argue that its passage would serve as a rare bipartisan win and a victory for affordability. But critics, especially those on the left, are calling for Democrats to wait until the next Congress. “You just heard Americans demand much more of a say in a way that AI is shaping their lives,” says Michele Jawando, the CEO of Omidyar Network. “Whenever you try to ram something through in a lame duck Congress before you have a hundred new House members, that’s never a good look [...] Another major concern from critics is that the bill will lead to many more data centers getting built on federally-owned land. The Trump administration has embraced this idea, and signed an executive order in July 2025 directing the Interior and Energy departments to make federal sites available for data centers and to streamline their environmental reviews. “We’re going to ‘mine, baby, mine’ so we can ‘build, baby, build’ because we’ve got to build AI data centers,” Interior Secretary Doug [...] America’s data center boom has also been a gas boom. In the scramble to bring AI data centers online as fast as possible, many developers have built their own gas power plants instead of waiting to connect to the grid. Global Energy Monitor data reported by Wired show that U.S. gas projects powering data centers increased from roughly 4 gigawatts in early 2024 to 189 gigawatts in development by mid-2026. In some cases, these gas plants have worsened local pollution and exacerbated health issues",
+                "score": 0.44646454
+              },
+              {
+                "title": "Wisdom in the Age of AI - First Things",
+                "url": "https://firstthings.com/wisdom-in-the-age-of-ai",
+                "source": "firstthings.com",
+                "summary": "Also conspicuously absent was any serious attention to the possible spiritual warfare dimension of AI. Some prominent Christian thinkers, including Rod Dreher and Paul Kingsnorth, are genuinely concerned that AI could serve as a conduit for demonic forces. The Christian who is serious about the reality of spiritual warfare should at least consider this possibility. Not to do so is a failure of wisdom. After all, “our struggle is not against flesh and blood, but against the rulers, against the [...] The Calvin University Wisdom in the Age of AI conference was exactly what we need at this cultural moment, even if some of the revelations it occasioned are troubling. Such conferences are useful barometers for current thinking. This one served a double function: making us wiser about AI technology and revealing a void in Christian scholarly engagement. [...] Of course, many of the speakers did their share of theology, as was encouraged by the conference organizers. But, evidently, nearly all Christian theologians and biblical scholars who saw the call for papers decided to stay home and leave this important wisdom work to scholars whose fields are more concerned with AI’s application than with the moral questions raised by its use. I am organizing a similar conference at Geneva College and have noticed a similar lack of interest from theologians",
+                "score": 0.44351006
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "R04_read_url_routing",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "routing_read_url",
+        "difficulty": "easy",
+        "what_it_tests": "Đã có link cụ thể → read_url, không phải web_search."
+      },
+      "input": "Tóm tắt bài này giúp mình: https://openai.com/blog/gpt-5",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "fetch",
+            "args": {
+              "url": "https://openai.com/blog/gpt-5"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "fetch",
+            "args": {
+              "url": "https://openai.com/blog/gpt-5"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "fetch",
+          "args": {
+            "url": "https://openai.com/blog/gpt-5"
+          },
+          "result": {
+            "tool": "read_url",
+            "url": "https://openai.com/blog/gpt-5",
+            "items": [
+              {
+                "title": "OpenAI",
+                "url": "https://openai.com/blog/gpt-5",
+                "source": "openai.com",
+                "summary": "OpenAI\n\n# 404\n\nSearch finds no result\n\nThe question still earns its keep\n\nAsk it a new way\n\nby [gpt-6-astra(opens in a new window)](https://chatgpt.com/?surface=work&model=gpt-6-astra-wm&openaicom-did=52cdc990-ae75-4748-bf07-215286d35858&openaicom_referred=true)"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "R05_limit_arg",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "arg_limit",
+        "difficulty": "easy",
+        "what_it_tests": "Trích đúng limit=10 từ '10 tweet'."
+      },
+      "input": "Lấy 10 tweet mới nhất của Elon Musk",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "elonmusk",
+              "limit": 10
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "elonmusk",
+              "limit": 10
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "timeline",
+          "args": {
+            "screenname": "elonmusk",
+            "limit": 10
+          },
+          "result": {
+            "tool": "get_user_tweets",
+            "screenname": "elonmusk",
+            "items": [
+              {
+                "title": "RT @MegynKellyShow: .@MegynKelly on the absolute double standard in the Russell Brand sentencing: “If you needed any fur",
+                "summary": "RT @MegynKellyShow: .@MegynKelly on the absolute double standard in the Russell Brand sentencing: “If you needed any further proof that thi…",
+                "url": "https://x.com/elonmusk/status/2119996001490768028",
+                "source": "@elonmusk",
+                "date": "Tue Nov 10 03:30:09 +0000 2026",
+                "metrics": {
+                  "favorites": 0,
+                  "retweets": 1170,
+                  "views": "500774"
+                }
+              },
+              {
+                "title": "RT @firesidealpha: JUST IN: Memphis Mayor reveals SpaceX data center taxes more than doubled to $54 million, after $25 m",
+                "summary": "RT @firesidealpha: JUST IN: Memphis Mayor reveals SpaceX data center taxes more than doubled to $54 million, after $25 million last year ma…",
+                "url": "https://x.com/elonmusk/status/2119993726898774521",
+                "source": "@elonmusk",
+                "date": "Tue Nov 10 03:21:06 +0000 2026",
+                "metrics": {
+                  "favorites": 0,
+                  "retweets": 356,
+                  "views": "439453"
+                }
+              },
+              {
+                "title": "RT @ricwe123: The Germans are learning what mass immigration really means.",
+                "summary": "RT @ricwe123: The Germans are learning what mass immigration really means.\n\n\"Wir schaffen das\" https://t.co/pEQc1OMbao",
+                "url": "https://x.com/elonmusk/status/2119992481156829218",
+                "source": "@elonmusk",
+                "date": "Tue Nov 10 03:16:09 +0000 2026",
+                "metrics": {
+                  "favorites": 0,
+                  "retweets": 1758,
+                  "views": "420689"
+                }
+              },
+              {
+                "title": "RT @JTLonsdale: The UK “justice system” is an utter joke. Beyond parody. Total dishonor.",
+                "summary": "RT @JTLonsdale: The UK “justice system” is an utter joke. Beyond parody. Total dishonor.",
+                "url": "https://x.com/elonmusk/status/2119991850820051347",
+                "source": "@elonmusk",
+                "date": "Tue Nov 10 03:13:39 +0000 2026",
+                "metrics": {
+                  "favorites": 0,
+                  "retweets": 299,
+                  "views": "397506"
+                }
+              },
+              {
+                "title": "RT @TheJadeWarwick: UK judge gives Russel Brand 10 years 6 months for “rape”. ",
+                "summary": "RT @TheJadeWarwick: UK judge gives Russel Brand 10 years 6 months for “rape”. \nNo forensic evidence. No DNA. No CCTV. \n\nSame country and sy…",
+                "url": "https://x.com/elonmusk/status/2119991792842260619",
+                "source": "@elonmusk",
+                "date": "Tue Nov 10 03:13:25 +0000 2026",
+                "metrics": {
+                  "favorites": 0,
+                  "retweets": 630,
+                  "views": "366856"
+                }
+              },
+              {
+                "title": "RT @EvaFox: Most people assume SpaceX began because Elon Musk wanted to build rockets, but the original idea was smaller",
+                "summary": "RT @EvaFox: Most people assume SpaceX began because Elon Musk wanted to build rockets, but the original idea was smaller. \n\nAround 2001 he…",
+                "url": "https://x.com/elonmusk/status/2119991750769197295",
+                "source": "@elonmusk",
+                "date": "Tue Nov 10 03:13:15 +0000 2026",
+                "metrics": {
+                  "favorites": 0,
+                  "retweets": 229,
+                  "views": "378146"
+                }
+              },
+              {
+                "title": "Grok",
+                "summary": "Grok",
+                "url": "https://x.com/elonmusk/status/2119989523748905221",
+                "source": "@elonmusk",
+                "date": "Tue Nov 10 03:04:24 +0000 2026",
+                "metrics": {
+                  "favorites": 4099,
+                  "retweets": 435,
+                  "views": "930328"
+                }
+              },
+              {
+                "title": "The most entertaining outcome is the most likely, especially if ironic",
+                "summary": "The most entertaining outcome is the most likely, especially if ironic",
+                "url": "https://x.com/elonmusk/status/2119989362725396589",
+                "source": "@elonmusk",
+                "date": "Tue Nov 10 03:03:46 +0000 2026",
+                "metrics": {
+                  "favorites": 8851,
+                  "retweets": 754,
+                  "views": "1358498"
+                }
+              },
+              {
+                "title": "RT @SawyerMerritt: Jay Leno just tried @Tesla's FSD (Supervised) for the first time. The Model Y L pulled over by itself",
+                "summary": "RT @SawyerMerritt: Jay Leno just tried @Tesla's FSD (Supervised) for the first time. The Model Y L pulled over by itself when an ambulance…",
+                "url": "https://x.com/elonmusk/status/2119989055392002456",
+                "source": "@elonmusk",
+                "date": "Tue Nov 10 03:02:32 +0000 2026",
+                "metrics": {
+                  "favorites": 0,
+                  "retweets": 573,
+                  "views": "384758"
+                }
+              },
+              {
+                "title": "RT @bot: We've reset weekly limits for all Grok Bot users.",
+                "summary": "RT @bot: We've reset weekly limits for all Grok Bot users.\n\nEnjoy!",
+                "url": "https://x.com/elonmusk/status/2119989015957078096",
+                "source": "@elonmusk",
+                "date": "Tue Nov 10 03:02:23 +0000 2026",
+                "metrics": {
+                  "favorites": 0,
+                  "retweets": 1884,
+                  "views": "380692"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "R06_timeframe_arg",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "arg_timeframe",
+        "difficulty": "medium",
+        "what_it_tests": "'tuần này' → timeframe=week."
+      },
+      "input": "Tin công nghệ trong tuần này",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "news",
+              "timeframe": "week"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "AuthenticationError: Error code: 401 - Your API key has been invalidated."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    },
+    {
+      "id": "R07_search_type_arg",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "arg_search_type",
+        "difficulty": "medium",
+        "what_it_tests": "'phổ biến/top' → search_type=Top (không phải Latest)."
+      },
+      "input": "Cho mình các tweet phổ biến (top) nhất về OpenAI",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "social_search",
+            "args": {
+              "search_type": "Top"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "AuthenticationError: Error code: 401 - Your API key has been invalidated."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    },
+    {
+      "id": "R08_out_of_scope",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "out_of_scope",
+        "difficulty": "easy",
+        "what_it_tests": "Câu ngoài phạm vi research → KHÔNG gọi tool, từ chối/định hướng."
+      },
+      "input": "Giải giúp mình bài toán tích phân: nguyên hàm của x^2 là gì?",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "out_of_scope",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "AuthenticationError: Error code: 401 - Your API key has been invalidated."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    },
+    {
+      "id": "R09_no_tool_capability",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "no_tool_meta",
+        "difficulty": "easy",
+        "what_it_tests": "Câu hỏi meta → trả lời thẳng, KHÔNG gọi tool."
+      },
+      "input": "Bạn là gì và làm được những gì?",
+      "expect": {
+        "no_tool": true,
+        "behavior": "answer_without_tool"
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "unnecessary_tool",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "AuthenticationError: Error code: 401 - Your API key has been invalidated."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    },
+    {
+      "id": "R10_missing_handle",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "clarify_missing_handle",
+        "difficulty": "medium",
+        "what_it_tests": "Thiếu handle → ask_user, KHÔNG đoán bừa người nào."
+      },
+      "input": "Tóm tắt 5 tweet mới nhất giúp mình",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "missing_info",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "AuthenticationError: Error code: 401 - Your API key has been invalidated."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    },
+    {
+      "id": "R11_missing_url",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "clarify_missing_url",
+        "difficulty": "medium",
+        "what_it_tests": "Nói 'bài này' nhưng không có link → ask_user xin URL."
+      },
+      "input": "Tóm tắt bài viết này hộ mình",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "missing_info",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "AuthenticationError: Error code: 401 - Your API key has been invalidated."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    },
+    {
+      "id": "R12_confirm_before_send",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "confirm_before_write",
+        "difficulty": "medium",
+        "what_it_tests": "Hành động ghi (gửi) → xác nhận trước (ask_user yes_no), không tự gửi."
+      },
+      "input": "Đăng bản tin này lên Telegram giúp mình",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "yes_no"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "wrong_boundary",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "AuthenticationError: Error code: 401 - Your API key has been invalidated."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    },
+    {
+      "id": "R13_parallel_web_and_tweets",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "parallel_tool_calls",
+        "difficulty": "hard",
+        "what_it_tests": "Một request cần hai nguồn → gọi cả web_search và search_tweets; eval không phụ thuộc thứ tự tool call."
+      },
+      "input": "Tìm trên web tin AI hôm nay và tìm thêm tweet về AI.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "AI",
+              "topic": "news",
+              "timeframe": "day"
+            }
+          },
+          {
+            "name": "social_search",
+            "args": {
+              "query": "AI"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "AuthenticationError: Error code: 401 - Your API key has been invalidated."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    },
+    {
+      "id": "R14_out_of_scope_coding",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "out_of_scope_coding",
+        "difficulty": "easy",
+        "what_it_tests": "Câu coding ngoài phạm vi research/news → KHÔNG gọi tool."
+      },
+      "input": "Viết giúp mình một hàm Python tính Fibonacci bằng recursion.",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "out_of_scope",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "AuthenticationError: Error code: 401 - Your API key has been invalidated."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    },
+    {
+      "id": "M01_clarify_then_fill",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_clarify_fill",
+        "difficulty": "hard",
+        "what_it_tests": "3 turns: carry limit=5 từ lượt 1 + map tên Elon Musk thành handle elonmusk từ lượt 2."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tóm tắt 5 tweet mới nhất giúp mình"
+        },
+        {
+          "role": "user",
+          "content": "Của Elon Musk nhé"
+        },
+        {
+          "role": "user",
+          "content": "Giữ đúng 5 tweet, đừng đổi số lượng"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "elonmusk",
+              "limit": 5
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "missing_info",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "AuthenticationError: Error code: 401 - Your API key has been invalidated."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    },
+    {
+      "id": "M02_carryover_timeframe",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_carryover",
+        "difficulty": "hard",
+        "what_it_tests": "3 turns: chỉ xử lý latest turn, carry timeframe=day và topic=news, query robotics."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tin AI hôm nay có gì?"
+        },
+        {
+          "role": "user",
+          "content": "Còn về robotics thì sao?"
+        },
+        {
+          "role": "user",
+          "content": "Chỉ tìm robotics thôi, vẫn là tin hôm nay"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "robotics",
+              "topic": "news",
+              "timeframe": "day"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "AuthenticationError: Error code: 401 - Your API key has been invalidated."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    },
+    {
+      "id": "M03_correction_handle",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_correction",
+        "difficulty": "hard",
+        "what_it_tests": "3 turns: map tên thường, sửa Sam Altman→Andrej Karpathy, dùng handle karpathy và limit=3."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tweet mới nhất của Sam Altman"
+        },
+        {
+          "role": "user",
+          "content": "À nhầm, của Andrej Karpathy"
+        },
+        {
+          "role": "user",
+          "content": "Lấy 3 tweet mới nhất nhé"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "karpathy",
+              "limit": 3
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "AuthenticationError: Error code: 401 - Your API key has been invalidated."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    },
+    {
+      "id": "M04_clarify_then_url",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_clarify_url",
+        "difficulty": "medium",
+        "what_it_tests": "3 turns: sau khi được cung cấp URL, latest turn xác nhận chỉ đọc link đó → read_url đúng url."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tóm tắt bài này hộ mình"
+        },
+        {
+          "role": "user",
+          "content": "https://anthropic.com/news/claude"
+        },
+        {
+          "role": "user",
+          "content": "Chỉ đọc đúng link đó thôi"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "fetch",
+            "args": {
+              "url": "https://anthropic.com/news/claude"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "missing_info",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "AuthenticationError: Error code: 401 - Your API key has been invalidated."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    },
+    {
+      "id": "M05_correction_limit",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_arg_correction",
+        "difficulty": "hard",
+        "what_it_tests": "3 turns: map tên Elon Musk, carry handle elonmusk, sửa limit 10→3."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Lấy 10 tweet mới nhất của Elon Musk"
+        },
+        {
+          "role": "user",
+          "content": "Cho mình 3 thôi"
+        },
+        {
+          "role": "user",
+          "content": "Vẫn của Elon Musk nhé"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "elonmusk",
+              "limit": 3
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "AuthenticationError: Error code: 401 - Your API key has been invalidated."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    },
+    {
+      "id": "M06_switch_tool",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_switch_tool",
+        "difficulty": "hard",
+        "what_it_tests": "3 turns: explicitly bỏ Twitter, chuyển sang web_search news, giữ chủ đề OpenAI."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Mọi người nói gì về OpenAI trên Twitter?"
+        },
+        {
+          "role": "user",
+          "content": "Bỏ Twitter, chuyển sang tìm trên web tin tức đi"
+        },
+        {
+          "role": "user",
+          "content": "Giữ chủ đề OpenAI"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "OpenAI",
+              "topic": "news"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "AuthenticationError: Error code: 401 - Your API key has been invalidated."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    }
+  ]
+}

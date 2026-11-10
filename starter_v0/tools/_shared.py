@@ -36,3 +36,21 @@ def terms(text: str) -> set[str]:
     folded = fold_text(text)
     return {term for term in re.findall(r"[a-z0-9]+", folded) if len(term) > 1 and term not in stopwords}
 
+
+
+def clamp_int(value: Any, default: int, low: int, high: int) -> int:
+    """Coerce a model-provided number ("5", 5.0, None, 0, 999) into [low, high]."""
+    try:
+        number = int(value)
+    except (TypeError, ValueError):
+        number = default
+    return max(low, min(high, number))
+
+
+def pick(value: Any, allowed: tuple[str, ...], default: str) -> str:
+    """Return value if it is one of `allowed` (case-insensitive), else default."""
+    if isinstance(value, str):
+        for option in allowed:
+            if value.strip().lower() == option.lower():
+                return option
+    return default

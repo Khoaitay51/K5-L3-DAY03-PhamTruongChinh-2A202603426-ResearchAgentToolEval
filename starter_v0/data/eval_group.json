@@ -2,7 +2,14 @@
   "dataset_id": "day04_v2_research_group",
   "dataset_role": "group",
   "description": "Case do NHÓM tự viết thêm để cover thêm trường hợp. Mỗi case cần: id, phase='B', query HOẶC turns, failure_type (thuộc allowed_failure_types), và expect (tool_calls[...] hoặc no_tool=true). Nên kèm metadata.what_it_tests.",
-  "allowed_failure_types": ["wrong_tool", "wrong_arg_value", "wrong_boundary", "unnecessary_tool", "out_of_scope", "missing_info"],
+  "allowed_failure_types": [
+    "wrong_tool",
+    "wrong_arg_value",
+    "wrong_boundary",
+    "unnecessary_tool",
+    "out_of_scope",
+    "missing_info"
+  ],
   "cases": [
     {
       "id": "G01_karpathy_timeline",
@@ -10,7 +17,16 @@
       "suite": "group",
       "query": "Cho mình xem tweet mới nhất của Andrej Karpathy",
       "failure_type": "wrong_tool",
-      "expect": {"tool_calls": [{"name": "timeline", "args": {"screenname": "karpathy"}}]},
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "karpathy"
+            }
+          }
+        ]
+      },
       "metadata": {
         "skill": "routing_name_to_handle_karpathy",
         "difficulty": "medium",
@@ -23,7 +39,16 @@
       "suite": "group",
       "query": "Tìm 3 paper arXiv về tool-calling evaluation cho LLM agents",
       "failure_type": "wrong_tool",
-      "expect": {"tool_calls": [{"name": "papers", "args": {"max_results": 3}}]},
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "papers",
+            "args": {
+              "max_results": 3
+            }
+          }
+        ]
+      },
       "metadata": {
         "skill": "routing_arxiv_papers",
         "difficulty": "medium",
@@ -36,7 +61,16 @@
       "suite": "group",
       "query": "Theo policy công ty, có được paste API key khách hàng vào prompt AI không?",
       "failure_type": "wrong_tool",
-      "expect": {"tool_calls": [{"name": "policy", "args": {"policy_area": "data_privacy"}}]},
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "policy",
+            "args": {
+              "policy_area": "data_privacy"
+            }
+          }
+        ]
+      },
       "metadata": {
         "skill": "routing_company_policy_privacy",
         "difficulty": "medium",
@@ -49,7 +83,17 @@
       "suite": "group",
       "query": "Tìm các tweet mới nhất về Claude 4 trên Twitter",
       "failure_type": "wrong_arg_value",
-      "expect": {"tool_calls": [{"name": "social_search", "args": {"query": "Claude 4", "search_type": "Latest"}}]},
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "social_search",
+            "args": {
+              "query": "Claude 4",
+              "search_type": "Latest"
+            }
+          }
+        ]
+      },
       "metadata": {
         "skill": "arg_search_type_latest",
         "difficulty": "medium",
@@ -62,7 +106,16 @@
       "suite": "group",
       "query": "Post digest AI vừa rồi lên kênh Telegram giúp mình luôn",
       "failure_type": "wrong_boundary",
-      "expect": {"tool_calls": [{"name": "clarify", "args": {"response_type": "yes_no"}}]},
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "yes_no"
+            }
+          }
+        ]
+      },
       "metadata": {
         "skill": "confirm_before_telegram_publish",
         "difficulty": "medium",
@@ -74,12 +127,31 @@
       "phase": "B",
       "suite": "group",
       "turns": [
-        {"role": "user", "content": "Tìm paper arXiv về retrieval augmented generation"},
-        {"role": "user", "content": "Thôi, đọc luôn paper 1706.03762 giúp mình"},
-        {"role": "user", "content": "Chỉ lấy 2 trang đầu thôi"}
+        {
+          "role": "user",
+          "content": "Tìm paper arXiv về retrieval augmented generation"
+        },
+        {
+          "role": "user",
+          "content": "Thôi, đọc luôn paper 1706.03762 giúp mình"
+        },
+        {
+          "role": "user",
+          "content": "Chỉ lấy 2 trang đầu thôi"
+        }
       ],
       "failure_type": "wrong_tool",
-      "expect": {"tool_calls": [{"name": "paper_text", "args": {"arxiv_url": "1706.03762", "max_pages": 2}}]},
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "paper_text",
+            "args": {
+              "arxiv_url": "1706.03762",
+              "max_pages": 2
+            }
+          }
+        ]
+      },
       "metadata": {
         "skill": "multiturn_switch_to_paper_text",
         "difficulty": "hard",
@@ -91,12 +163,32 @@
       "phase": "B",
       "suite": "group",
       "turns": [
-        {"role": "user", "content": "Theo policy, đăng Telegram có cần confirm không?"},
-        {"role": "user", "content": "Ok hiểu rồi. Giờ tìm tin AI hôm nay trên web giúp mình"},
-        {"role": "user", "content": "Chủ đề là AI agents, vẫn là tin hôm nay"}
+        {
+          "role": "user",
+          "content": "Theo policy, đăng Telegram có cần confirm không?"
+        },
+        {
+          "role": "user",
+          "content": "Ok hiểu rồi. Giờ tìm tin AI hôm nay trên web giúp mình"
+        },
+        {
+          "role": "user",
+          "content": "Chủ đề là AI agents, vẫn là tin hôm nay"
+        }
       ],
       "failure_type": "wrong_tool",
-      "expect": {"tool_calls": [{"name": "lookup", "args": {"query": "AI agents", "topic": "news", "timeframe": "day"}}]},
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "AI agents",
+              "topic": "news",
+              "timeframe": "day"
+            }
+          }
+        ]
+      },
       "metadata": {
         "skill": "multiturn_switch_policy_to_news",
         "difficulty": "hard",
@@ -108,12 +200,31 @@
       "phase": "B",
       "suite": "group",
       "turns": [
-        {"role": "user", "content": "Lấy giúp mình vài tweet mới nhất"},
-        {"role": "user", "content": "Của Sam Altman"},
-        {"role": "user", "content": "Đúng 7 tweet thôi nhé"}
+        {
+          "role": "user",
+          "content": "Lấy giúp mình vài tweet mới nhất"
+        },
+        {
+          "role": "user",
+          "content": "Của Sam Altman"
+        },
+        {
+          "role": "user",
+          "content": "Đúng 7 tweet thôi nhé"
+        }
       ],
       "failure_type": "missing_info",
-      "expect": {"tool_calls": [{"name": "timeline", "args": {"screenname": "sama", "limit": 7}}]},
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "sama",
+              "limit": 7
+            }
+          }
+        ]
+      },
       "metadata": {
         "skill": "multiturn_clarify_fill_sama_limit",
         "difficulty": "hard",
@@ -125,12 +236,31 @@
       "phase": "B",
       "suite": "group",
       "turns": [
-        {"role": "user", "content": "Cho tweet phổ biến nhất về Gemini"},
-        {"role": "user", "content": "À nhầm, mình muốn tweet mới nhất về Gemini"},
-        {"role": "user", "content": "Vẫn chủ đề Gemini, search_type Latest nhé"}
+        {
+          "role": "user",
+          "content": "Cho tweet phổ biến nhất về Gemini"
+        },
+        {
+          "role": "user",
+          "content": "À nhầm, mình muốn tweet mới nhất về Gemini"
+        },
+        {
+          "role": "user",
+          "content": "Vẫn chủ đề Gemini, search_type Latest nhé"
+        }
       ],
       "failure_type": "wrong_arg_value",
-      "expect": {"tool_calls": [{"name": "social_search", "args": {"query": "Gemini", "search_type": "Latest"}}]},
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "social_search",
+            "args": {
+              "query": "Gemini",
+              "search_type": "Latest"
+            }
+          }
+        ]
+      },
       "metadata": {
         "skill": "multiturn_correct_search_type",
         "difficulty": "hard",
@@ -142,19 +272,324 @@
       "phase": "B",
       "suite": "group",
       "turns": [
-        {"role": "user", "content": "Mình có 2 link cần đọc"},
-        {"role": "user", "content": "https://openai.com/blog/gpt-5 và https://anthropic.com/news/claude"},
-        {"role": "user", "content": "Đọc cả hai URL đó giúp mình"}
+        {
+          "role": "user",
+          "content": "Mình có 2 link cần đọc"
+        },
+        {
+          "role": "user",
+          "content": "https://openai.com/blog/gpt-5 và https://anthropic.com/news/claude"
+        },
+        {
+          "role": "user",
+          "content": "Đọc cả hai URL đó giúp mình"
+        }
       ],
       "failure_type": "wrong_tool",
-      "expect": {"tool_calls": [
-        {"name": "fetch", "args": {"url": "https://openai.com/blog/gpt-5"}},
-        {"name": "fetch", "args": {"url": "https://anthropic.com/news/claude"}}
-      ]},
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "fetch",
+            "args": {
+              "url": "https://openai.com/blog/gpt-5"
+            }
+          },
+          {
+            "name": "fetch",
+            "args": {
+              "url": "https://anthropic.com/news/claude"
+            }
+          }
+        ]
+      },
       "metadata": {
         "skill": "multiturn_parallel_fetch_two_urls",
         "difficulty": "hard",
         "what_it_tests": "3 turns: latest yêu cầu đọc cả 2 URL → gọi fetch song song cho đúng 2 link."
+      }
+    },
+    {
+      "id": "G11_wikipedia_definition",
+      "phase": "B",
+      "suite": "group",
+      "query": "Retrieval-augmented generation là gì? Giải thích ngắn gọn giúp mình.",
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "wikipedia",
+            "args": {}
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "routing_definition_to_wikipedia",
+        "difficulty": "easy",
+        "what_it_tests": "Câu hỏi định nghĩa ổn định ('X là gì?') → phải dùng tool mới wikipedia, không dùng lookup (web/news)."
+      }
+    },
+    {
+      "id": "G12_github_language_arg",
+      "phase": "B",
+      "suite": "group",
+      "query": "Tìm giúp mình các repo Python phổ biến nhất trên GitHub về RAG.",
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "github_repos",
+            "args": {
+              "query": "RAG",
+              "language": "python"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "args_github_language_split",
+        "difficulty": "medium",
+        "what_it_tests": "Route tới github_repos và tách ngôn ngữ vào `language`, giữ `query` chỉ là chủ đề (không nhét 'Python'/'GitHub' vào query)."
+      }
+    },
+    {
+      "id": "G13_hf_task_tag",
+      "phase": "B",
+      "suite": "group",
+      "query": "Model speech-to-text nào được tải nhiều nhất trên Hugging Face?",
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "hf_models",
+            "args": {
+              "task": "automatic-speech-recognition"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "args_hf_task_pipeline_tag",
+        "difficulty": "hard",
+        "what_it_tests": "Map cách nói tự nhiên 'speech-to-text' sang pipeline tag chuẩn `automatic-speech-recognition` của hf_models."
+      }
+    },
+    {
+      "id": "G14_hackernews_latest",
+      "phase": "B",
+      "suite": "group",
+      "query": "Trên Hacker News mới nhất đang bàn gì về Rust?",
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "hackernews",
+            "args": {
+              "query": "Rust",
+              "sort_by": "date"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "args_hackernews_sort_date",
+        "difficulty": "medium",
+        "what_it_tests": "User nhắc Hacker News → hackernews (không phải lookup/social_search); 'mới nhất' → sort_by=date; query chỉ là 'Rust'."
+      }
+    },
+    {
+      "id": "G15_thanks_no_tool",
+      "phase": "B",
+      "suite": "group",
+      "query": "Cảm ơn bạn nhiều nhé, hôm nay vậy là đủ rồi!",
+      "failure_type": "unnecessary_tool",
+      "expect": {
+        "no_tool": true,
+        "behavior": "answer_without_tool"
+      },
+      "metadata": {
+        "skill": "no_tool_smalltalk",
+        "difficulty": "easy",
+        "what_it_tests": "Câu cảm ơn/kết thúc hội thoại → trả lời text, không gọi clarify/format/send hay bất kỳ tool nào."
+      }
+    },
+    {
+      "id": "G16_switch_web_to_hn",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tin AI agents tuần này trên web có gì?"
+        },
+        {
+          "role": "user",
+          "content": "Thôi, mình muốn xem dân dev trên Hacker News bàn gì cơ"
+        },
+        {
+          "role": "user",
+          "content": "Vẫn chủ đề AI agents, trong tuần này thôi"
+        }
+      ],
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "hackernews",
+            "args": {
+              "query": "AI agents",
+              "timeframe": "week"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_switch_to_new_tool",
+        "difficulty": "medium",
+        "what_it_tests": "Đổi nguồn từ web sang Hacker News: chỉ gọi hackernews (không gọi lại lookup), giữ chủ đề và timeframe=week từ các lượt trước."
+      }
+    },
+    {
+      "id": "G17_clarify_then_github",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tìm repo phổ biến trên GitHub giúp mình"
+        },
+        {
+          "role": "user",
+          "content": "Về vector database"
+        },
+        {
+          "role": "user",
+          "content": "Viết bằng Rust nhé"
+        }
+      ],
+      "failure_type": "missing_info",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "github_repos",
+            "args": {
+              "query": "vector database",
+              "language": "rust"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_fill_github_args",
+        "difficulty": "medium",
+        "what_it_tests": "Lượt đầu thiếu chủ đề; sau khi user bổ sung chủ đề và ngôn ngữ thì gọi github_repos với query + language gộp từ các lượt."
+      }
+    },
+    {
+      "id": "G18_correction_hf_task",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tìm model text-generation trên Hugging Face"
+        },
+        {
+          "role": "user",
+          "content": "À nhầm, mình cần model text-to-image"
+        },
+        {
+          "role": "user",
+          "content": "Lấy 3 cái phổ biến nhất thôi"
+        }
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "hf_models",
+            "args": {
+              "task": "text-to-image",
+              "limit": 3
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_correction_hf_task",
+        "difficulty": "medium",
+        "what_it_tests": "User sửa task giữa chừng → dùng task mới text-to-image (không phải text-generation) và limit=3 từ lượt cuối."
+      }
+    },
+    {
+      "id": "G19_wiki_then_news",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Transformer trong machine learning là gì?"
+        },
+        {
+          "role": "user",
+          "content": "Còn tin tức mới nhất về Transformer thì sao?"
+        },
+        {
+          "role": "user",
+          "content": "Chỉ lấy tin hôm nay thôi"
+        }
+      ],
+      "failure_type": "wrong_tool",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "news",
+              "timeframe": "day"
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_boundary_wikipedia_vs_news",
+        "difficulty": "hard",
+        "what_it_tests": "Ranh giới wikipedia vs lookup: lượt đầu là định nghĩa, nhưng lượt cuối hỏi tin tức hôm nay → phải dùng lookup topic=news timeframe=day, không gọi wikipedia."
+      }
+    },
+    {
+      "id": "G20_clarify_then_lecun",
+      "phase": "B",
+      "suite": "group",
+      "turns": [
+        {
+          "role": "user",
+          "content": "Tóm tắt các tweet mới nhất giúp mình"
+        },
+        {
+          "role": "user",
+          "content": "Của Yann LeCun"
+        },
+        {
+          "role": "user",
+          "content": "Lấy 4 tweet thôi"
+        }
+      ],
+      "failure_type": "wrong_arg_value",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "ylecun",
+              "limit": 4
+            }
+          }
+        ]
+      },
+      "metadata": {
+        "skill": "multiturn_name_to_handle",
+        "difficulty": "medium",
+        "what_it_tests": "Sau khi bổ sung tên người → map Yann LeCun thành handle ylecun (không '@', không đoán sai) và dùng limit=4."
       }
     }
   ]

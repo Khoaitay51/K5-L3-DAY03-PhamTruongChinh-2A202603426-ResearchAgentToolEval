@@ -1,0 +1,714 @@
+{
+  "run_id": "v3_B_group_openai_20261110T185937284652",
+  "version": "v3",
+  "artifact_version": "v3+pa0fc0162f66a+t93b263e225cd",
+  "prompt_hash": "a0fc0162f66af6dd8d01e83a9be91899fca6e79f7b1d886fe74e1c54ea64396a",
+  "tools_hash": "93b263e225cd9177742191fa62caba1e6de18e2501a4b5ff64b0900b86bcb703",
+  "phase": "B",
+  "suite": "group",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "system_prompt": "G:\\My Drive\\VinUni\\LAB\\Lab 3\\K5-L3-DAY03-PhamTruongChinh-2A202603426-ResearchAgentToolEval\\starter_v0\\artifacts\\system_prompt.md",
+  "tools": "G:\\My Drive\\VinUni\\LAB\\Lab 3\\K5-L3-DAY03-PhamTruongChinh-2A202603426-ResearchAgentToolEval\\starter_v0\\artifacts\\tools.yaml",
+  "eval_cases": "data\\eval_group.json",
+  "dataset_id": "day04_v2_research_group",
+  "dataset_role": "group",
+  "description": "Case do NHÓM tự viết thêm để cover thêm trường hợp. Mỗi case cần: id, phase='B', query HOẶC turns, failure_type (thuộc allowed_failure_types), và expect (tool_calls[...] hoặc no_tool=true). Nên kèm metadata.what_it_tests.",
+  "generated_at": "2026-11-10T18:59:37",
+  "summary": {
+    "total_cases": 10,
+    "measured_cases": 10,
+    "provider_error_cases": 0,
+    "passed_cases": 10,
+    "case_accuracy": 1.0,
+    "tool_routing_accuracy": 1.0,
+    "argument_accuracy": 1.0,
+    "multiturn_accuracy": 1.0,
+    "failure_counts": {},
+    "observed_mismatch_counts": {}
+  },
+  "results": [
+    {
+      "id": "G01_wikipedia_definition",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "routing_definition_to_wikipedia",
+        "difficulty": "easy",
+        "what_it_tests": "Câu hỏi định nghĩa ổn định ('X là gì?') → phải dùng tool mới wikipedia, không dùng lookup (web/news)."
+      },
+      "input": "Retrieval-augmented generation là gì? Giải thích ngắn gọn giúp mình.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "wikipedia",
+            "args": {}
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "wikipedia",
+            "args": {
+              "query": "Retrieval-augmented generation",
+              "lang": "vi"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "wikipedia",
+          "args": {
+            "query": "Retrieval-augmented generation",
+            "lang": "vi"
+          },
+          "result": {
+            "tool": "wikipedia_summary",
+            "query": "Retrieval-augmented generation",
+            "lang": "vi",
+            "items": [
+              {
+                "title": "Tạo sinh dựa trên truy xuất tăng cường",
+                "url": "https://vi.wikipedia.org/wiki/T%E1%BA%A1o_sinh_d%E1%BB%B1a_tr%C3%AAn_truy_xu%E1%BA%A5t_t%C4%83ng_c%C6%B0%E1%BB%9Dng",
+                "source": "vi.wikipedia.org",
+                "summary": "Tạo sinh dựa trên truy xuất tăng cường (tiếng Anh: retrieval-augmented generation hoặc RAG) là một kỹ thuật cho phép các mô hình ngôn ngữ lớn (LLM) truy xuất và kết hợp thông tin mới. Với RAG, các LLM không trả lời truy vấn của người dùng ngay lập tức. Thay vào đó, chúng sẽ tham khảo một bộ tài liệu được chỉ định trước. Những tài liệu này bổ sung thông tin cho dữ liệu huấn luyện có sẵn của LLM. Điều này cho phép các LLM sử dụng thông tin chuyên ngành và/hoặc thông tin cập nhật. Đây là những thông tin không có trong dữ liệu huấn luyện. Ví dụ, kỹ thuật này giúp các chatbot dựa trên LLM truy cập dữ liệu nội bộ của công ty. Nó cũng giúp tạo ra các phản hồi dựa trên những nguồn đáng tin cậy.\nRAG cải thiện các mô hình ngôn ngữ lớn (LLM) bằng cách tích hợp cơ chế truy xuất thông tin trước khi tạo ra phản hồi. Không giống như các LLM truyền thống chỉ dựa vào dữ liệu huấn luyện tĩnh, RAG lấy văn bản có liên quan từ cơ sở dữ liệu, tài liệu được tải lên, hoặc các nguồn trên web. Theo Ars Technica, \"RAG là một cách để cải thiện hiệu suất của LLM. Về cơ bản, nó kết hợp quy trình của LLM với quy trình tìm kiếm trên web hoặc tra cứu tài liệu khác để giúp LLM bám sát vào sự thật.\" Phương pháp này giúp giảm thiểu hiện tượng ảo giác của AI, hiện tượng này đã khiến các chatbot mô tả những chính sách không tồn tại, hoặc đề xuất các vụ án không có thật cho luật sư đang tìm kiếm án lệ để hỗ trợ cho lập luận của họ.\nRAG cũng làm giảm nhu cầu huấn luyện lại các LLM bằng dữ liệu mới. Điều này giúp..."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "G02_github_language_arg",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "args_github_language_split",
+        "difficulty": "medium",
+        "what_it_tests": "Route tới github_repos và tách ngôn ngữ vào `language`, giữ `query` chỉ là chủ đề (không nhét 'Python'/'GitHub' vào query)."
+      },
+      "input": "Tìm giúp mình các repo Python phổ biến nhất trên GitHub về RAG.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "github_repos",
+            "args": {
+              "query": "RAG",
+              "language": "python"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "github_repos",
+            "args": {
+              "query": "RAG",
+              "language": "python",
+              "sort_by": "stars",
+              "limit": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "github_repos",
+          "args": {
+            "query": "RAG",
+            "language": "python",
+            "sort_by": "stars",
+            "limit": 5
+          },
+          "result": {
+            "tool": "search_github_repos",
+            "error": "SSLError",
+            "message": "HTTPSConnectionPool(host='api.github.com', port=443): Max retries exceeded with url: /search/repositories?q=RAG+language%3Apython&per_page=5&sort=stars&order=desc (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1081)')))"
+          }
+        }
+      ]
+    },
+    {
+      "id": "G03_hf_task_tag",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "args_hf_task_pipeline_tag",
+        "difficulty": "hard",
+        "what_it_tests": "Map cách nói tự nhiên 'speech-to-text' sang pipeline tag chuẩn `automatic-speech-recognition` của hf_models."
+      },
+      "input": "Model speech-to-text nào được tải nhiều nhất trên Hugging Face?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "hf_models",
+            "args": {
+              "task": "automatic-speech-recognition"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "hf_models",
+            "args": {
+              "task": "automatic-speech-recognition",
+              "sort_by": "downloads",
+              "limit": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "hf_models",
+          "args": {
+            "task": "automatic-speech-recognition",
+            "sort_by": "downloads",
+            "limit": 5
+          },
+          "result": {
+            "tool": "search_hf_models",
+            "error": "SSLError",
+            "message": "HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /api/models?sort=downloads&direction=-1&limit=5&pipeline_tag=automatic-speech-recognition (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1081)')))"
+          }
+        }
+      ]
+    },
+    {
+      "id": "G04_hackernews_latest",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "args_hackernews_sort_date",
+        "difficulty": "medium",
+        "what_it_tests": "User nhắc Hacker News → hackernews (không phải lookup/social_search); 'mới nhất' → sort_by=date; query chỉ là 'Rust'."
+      },
+      "input": "Trên Hacker News mới nhất đang bàn gì về Rust?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "hackernews",
+            "args": {
+              "query": "Rust",
+              "sort_by": "date"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "hackernews",
+            "args": {
+              "query": "Rust",
+              "sort_by": "date",
+              "limit": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "hackernews",
+          "args": {
+            "query": "Rust",
+            "sort_by": "date",
+            "limit": 5
+          },
+          "result": {
+            "tool": "search_hackernews",
+            "error": "SSLError",
+            "message": "HTTPSConnectionPool(host='hn.algolia.com', port=443): Max retries exceeded with url: /api/v1/search_by_date?query=Rust&tags=story&hitsPerPage=5 (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1081)')))"
+          }
+        }
+      ]
+    },
+    {
+      "id": "G05_thanks_no_tool",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "no_tool_smalltalk",
+        "difficulty": "easy",
+        "what_it_tests": "Câu cảm ơn/kết thúc hội thoại → trả lời text, không gọi clarify/format/send hay bất kỳ tool nào."
+      },
+      "input": "Cảm ơn bạn nhiều nhé, hôm nay vậy là đủ rồi!",
+      "expect": {
+        "no_tool": true,
+        "behavior": "answer_without_tool"
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [],
+        "actual_text": "Không có gì! Nếu bạn cần thêm thông tin hay hỗ trợ gì trong tương lai, đừng ngần ngại quay lại nhé. Chúc bạn có một ngày tuyệt vời!",
+        "case_failure_type": "unnecessary_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": []
+    },
+    {
+      "id": "G06_switch_web_to_hn",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_switch_to_new_tool",
+        "difficulty": "medium",
+        "what_it_tests": "Đổi nguồn từ web sang Hacker News: chỉ gọi hackernews (không gọi lại lookup), giữ chủ đề và timeframe=week từ các lượt trước."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tin AI agents tuần này trên web có gì?"
+        },
+        {
+          "role": "user",
+          "content": "Thôi, mình muốn xem dân dev trên Hacker News bàn gì cơ"
+        },
+        {
+          "role": "user",
+          "content": "Vẫn chủ đề AI agents, trong tuần này thôi"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "hackernews",
+            "args": {
+              "query": "AI agents",
+              "timeframe": "week"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "hackernews",
+            "args": {
+              "query": "AI agents",
+              "sort_by": "date",
+              "timeframe": "week",
+              "limit": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "hackernews",
+          "args": {
+            "query": "AI agents",
+            "sort_by": "date",
+            "timeframe": "week",
+            "limit": 5
+          },
+          "result": {
+            "tool": "search_hackernews",
+            "error": "SSLError",
+            "message": "HTTPSConnectionPool(host='hn.algolia.com', port=443): Max retries exceeded with url: /api/v1/search_by_date?query=AI+agents&tags=story&hitsPerPage=5&numericFilters=created_at_i%3E1793703092 (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1081)')))"
+          }
+        }
+      ]
+    },
+    {
+      "id": "G07_clarify_then_github",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_fill_github_args",
+        "difficulty": "medium",
+        "what_it_tests": "Lượt đầu thiếu chủ đề; sau khi user bổ sung chủ đề và ngôn ngữ thì gọi github_repos với query + language gộp từ các lượt."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tìm repo phổ biến trên GitHub giúp mình"
+        },
+        {
+          "role": "user",
+          "content": "Về vector database"
+        },
+        {
+          "role": "user",
+          "content": "Viết bằng Rust nhé"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "github_repos",
+            "args": {
+              "query": "vector database",
+              "language": "rust"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "github_repos",
+            "args": {
+              "query": "vector database",
+              "language": "rust",
+              "sort_by": "stars",
+              "limit": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "missing_info",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "github_repos",
+          "args": {
+            "query": "vector database",
+            "language": "rust",
+            "sort_by": "stars",
+            "limit": 5
+          },
+          "result": {
+            "tool": "search_github_repos",
+            "error": "SSLError",
+            "message": "HTTPSConnectionPool(host='api.github.com', port=443): Max retries exceeded with url: /search/repositories?q=vector+database+language%3Arust&per_page=5&sort=stars&order=desc (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1081)')))"
+          }
+        }
+      ]
+    },
+    {
+      "id": "G08_correction_hf_task",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_correction_hf_task",
+        "difficulty": "medium",
+        "what_it_tests": "User sửa task giữa chừng → dùng task mới text-to-image (không phải text-generation) và limit=3 từ lượt cuối."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tìm model text-generation trên Hugging Face"
+        },
+        {
+          "role": "user",
+          "content": "À nhầm, mình cần model text-to-image"
+        },
+        {
+          "role": "user",
+          "content": "Lấy 3 cái phổ biến nhất thôi"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "hf_models",
+            "args": {
+              "task": "text-to-image",
+              "limit": 3
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "hf_models",
+            "args": {
+              "query": "text-to-image",
+              "task": "text-to-image",
+              "sort_by": "downloads",
+              "limit": 3
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "hf_models",
+          "args": {
+            "query": "text-to-image",
+            "task": "text-to-image",
+            "sort_by": "downloads",
+            "limit": 3
+          },
+          "result": {
+            "tool": "search_hf_models",
+            "error": "SSLError",
+            "message": "HTTPSConnectionPool(host='huggingface.co', port=443): Max retries exceeded with url: /api/models?sort=downloads&direction=-1&limit=3&search=text-to-image&pipeline_tag=text-to-image (Caused by SSLError(SSLEOFError(8, '[SSL: UNEXPECTED_EOF_WHILE_READING] EOF occurred in violation of protocol (_ssl.c:1081)')))"
+          }
+        }
+      ]
+    },
+    {
+      "id": "G09_wiki_then_news",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_boundary_wikipedia_vs_news",
+        "difficulty": "hard",
+        "what_it_tests": "Ranh giới wikipedia vs lookup: lượt đầu là định nghĩa, nhưng lượt cuối hỏi tin tức hôm nay → phải dùng lookup topic=news timeframe=day, không gọi wikipedia."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Transformer trong machine learning là gì?"
+        },
+        {
+          "role": "user",
+          "content": "Còn tin tức mới nhất về Transformer thì sao?"
+        },
+        {
+          "role": "user",
+          "content": "Chỉ lấy tin hôm nay thôi"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "news",
+              "timeframe": "day"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "Transformer",
+              "topic": "news",
+              "timeframe": "day"
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "Transformer",
+            "topic": "news",
+            "timeframe": "day"
+          },
+          "result": {
+            "tool": "web_search",
+            "error": "ConnectionError",
+            "message": "('Connection aborted.', ConnectionResetError(10054, 'An existing connection was forcibly closed by the remote host', None, 10054, None))"
+          }
+        }
+      ]
+    },
+    {
+      "id": "G10_clarify_then_lecun",
+      "phase": "B",
+      "suite": "group",
+      "case_suite": "group",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_name_to_handle",
+        "difficulty": "medium",
+        "what_it_tests": "Sau khi bổ sung tên người → map Yann LeCun thành handle ylecun (không '@', không đoán sai) và dùng limit=4."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tóm tắt các tweet mới nhất giúp mình"
+        },
+        {
+          "role": "user",
+          "content": "Của Yann LeCun"
+        },
+        {
+          "role": "user",
+          "content": "Lấy 4 tweet thôi"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "ylecun",
+              "limit": 4
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "ylecun",
+              "limit": 4
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "timeline",
+          "args": {
+            "screenname": "ylecun",
+            "limit": 4
+          },
+          "result": {
+            "tool": "get_user_tweets",
+            "screenname": "ylecun",
+            "items": [
+              {
+                "title": "RT @randall_balestr: Our first major update on https://t.co/v8KSoNBKqM",
+                "summary": "RT @randall_balestr: Our first major update on https://t.co/v8KSoNBKqM\n- venue confirmed in the heart of Manhattan\n- paper deadline is Dece…",
+                "url": "https://x.com/ylecun/status/2119929780057375160",
+                "source": "@ylecun",
+                "date": "Mon Nov 09 23:07:00 +0000 2026",
+                "metrics": {
+                  "favorites": 0,
+                  "retweets": 21,
+                  "views": "4093"
+                }
+              },
+              {
+                "title": "RT @ylecun: @TimDarcet @gabriberton The P in JEPA stands for predictive.",
+                "summary": "RT @ylecun: @TimDarcet @gabriberton The P in JEPA stands for predictive.\nThe main distinction is not between JEA and JEPA, but between Join…",
+                "url": "https://x.com/ylecun/status/2119522897555595583",
+                "source": "@ylecun",
+                "date": "Sun Nov 08 20:10:12 +0000 2026",
+                "metrics": {
+                  "favorites": 0,
+                  "retweets": 68,
+                  "views": null
+                }
+              },
+              {
+                "title": "RT @TheTuringPost: There's one great example that shows how physics can help upgrade AI world models, and it's LeHami.",
+                "summary": "RT @TheTuringPost: There's one great example that shows how physics can help upgrade AI world models, and it's LeHami.\n\n@ylecun, @randall_b…",
+                "url": "https://x.com/ylecun/status/2119482154715349117",
+                "source": "@ylecun",
+                "date": "Sun Nov 08 17:28:18 +0000 2026",
+                "metrics": {
+                  "favorites": 0,
+                  "retweets": 47,
+                  "views": "5130"
+                }
+              },
+              {
+                "title": "RT @iamsupersocks: Arthur Mensch vient de poser sur LinkedIn la phrase que les députés devraient lire avant le 19 novemb",
+                "summary": "RT @iamsupersocks: Arthur Mensch vient de poser sur LinkedIn la phrase que les députés devraient lire avant le 19 novembre : quand Mistral…",
+                "url": "https://x.com/ylecun/status/2119479125458948535",
+                "source": "@ylecun",
+                "date": "Sun Nov 08 17:16:16 +0000 2026",
+                "metrics": {
+                  "favorites": 0,
+                  "retweets": 107,
+                  "views": "5090"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

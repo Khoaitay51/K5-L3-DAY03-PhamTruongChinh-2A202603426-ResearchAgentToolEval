@@ -29,6 +29,12 @@ def test_every_declared_tool_has_implementation(name: str) -> None:
     assert name in TOOL_FUNCTIONS, f"'{name}' is in tools.yaml but not registered in tools/__init__.py"
 
 
+@pytest.mark.parametrize("name", sorted(TOOL_FUNCTIONS))
+def test_every_registered_tool_is_declared(name: str) -> None:
+    """Regression: a tool registered in code but missing from tools.yaml is invisible to the model."""
+    assert name in DECLARED, f"'{name}' is registered in tools/__init__.py but not declared in tools.yaml"
+
+
 @pytest.mark.parametrize("name", sorted(DECLARED))
 def test_declared_params_exist_in_function_signature(name: str) -> None:
     """If the model sends an arg the function does not accept, the call crashes with TypeError."""

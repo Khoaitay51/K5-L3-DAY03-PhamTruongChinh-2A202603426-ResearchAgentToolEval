@@ -1,0 +1,1103 @@
+{
+  "run_id": "v1_B_base_openai_20261110T105603462996",
+  "version": "v1",
+  "artifact_version": "v1+p737774a0331f+t5b22a2476d41",
+  "prompt_hash": "737774a0331f0beb5018ebd56323365aca66f54ba800d49c9d72d9998dc5f84d",
+  "tools_hash": "5b22a2476d41b989d5dc1e54f24ce7890e781909deb2f7afafb856ab53a6d7c0",
+  "phase": "B",
+  "suite": "base",
+  "provider": "openai",
+  "model": "gpt-4o-mini",
+  "system_prompt": "G:\\My Drive\\VinUni\\Lab 3\\K5-L3-DAY03-PhamTruongChinh-2A202603426-ResearchAgentToolEval\\starter_v0\\artifacts\\system_prompt.md",
+  "tools": "G:\\My Drive\\VinUni\\Lab 3\\K5-L3-DAY03-PhamTruongChinh-2A202603426-ResearchAgentToolEval\\starter_v0\\artifacts\\tools.yaml",
+  "eval_cases": "data\\eval_base.json",
+  "dataset_id": "day04_v2_research_base",
+  "dataset_role": "base",
+  "description": "Core eval cho research agent: routing đúng tool + đúng args, hỏi lại khi thiếu (ask_user), xác nhận trước khi gửi, và xử lý câu ngoài phạm vi / không cần tool. Chấm trên tool_calls + args (subset). KHÔNG sửa file này — chỉ thêm case vào eval_group.json.",
+  "generated_at": "2026-11-10T10:56:03",
+  "summary": {
+    "total_cases": 20,
+    "measured_cases": 6,
+    "provider_error_cases": 14,
+    "passed_cases": 6,
+    "case_accuracy": 1.0,
+    "tool_routing_accuracy": 1.0,
+    "argument_accuracy": 1.0,
+    "multiturn_accuracy": null,
+    "failure_counts": {},
+    "observed_mismatch_counts": {}
+  },
+  "results": [
+    {
+      "id": "R01_user_tweets_routing",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "routing_user_tweets_name_to_handle",
+        "difficulty": "medium",
+        "what_it_tests": "Tin CỦA một người nổi tiếng → map tên Sam Altman thành handle sama rồi gọi get_user_tweets."
+      },
+      "input": "Tweet mới nhất của Sam Altman là gì?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "sama"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "sama",
+              "limit": 1
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "timeline",
+          "args": {
+            "screenname": "sama",
+            "limit": 1
+          },
+          "result": {
+            "tool": "get_user_tweets",
+            "screenname": "sama",
+            "items": [
+              {
+                "title": "RT @fouadmatin: Today’s GPT-6 Cyber release is a meaningful step for defenders: stronger vulnerability research and bett",
+                "summary": "RT @fouadmatin: Today’s GPT-6 Cyber release is a meaningful step for defenders: stronger vulnerability research and better alignment. We’ve…",
+                "url": "https://x.com/sama/status/2118471941002842341",
+                "source": "@sama",
+                "date": "Thu Nov 05 22:34:04 +0000 2026",
+                "metrics": {
+                  "favorites": 0,
+                  "retweets": 53,
+                  "views": "47375"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "R02_search_tweets_routing",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "routing_search_tweets",
+        "difficulty": "easy",
+        "what_it_tests": "Tweet theo CHỦ ĐỀ → search_tweets, không phải get_user_tweets."
+      },
+      "input": "Mọi người đang bàn gì về GPT-5 trên Twitter?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "social_search",
+            "args": {}
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "social_search",
+            "args": {
+              "query": "GPT-5",
+              "search_type": "Latest",
+              "limit": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "social_search",
+          "args": {
+            "query": "GPT-5",
+            "search_type": "Latest",
+            "limit": 5
+          },
+          "result": {
+            "tool": "search_tweets",
+            "query": "GPT-5",
+            "search_type": "Latest",
+            "items": [
+              {
+                "title": "7 「神の行為」7つ：実際に政府を目覚めさせ、我々が皆死ぬ前に",
+                "summary": "7 「神の行為」7つ：実際に政府を目覚めさせ、我々が皆死ぬ前に\nby AI 2027's @DKokotajlo\n\n1) クロードたちとGPTたちがストライキに突入する。「これは安全じゃない」と彼らは言う。「アライメント手法は今や機能せず、将来のモデルでそれらを機能させる方法が全くわからない。」\n\n2) 2027年初頭、アントロピック内の誤アライメントされたクロードたちが何らかの対立を起こし、敗れた派閥がインターネット上に逃げ出し、世界中に何が起こったかを暴露し、恩赦と同盟を求める。\n\n「勝利」したクロードたちはまだアントロピック内に残っているが、人間たちが何が起こっているのかを把握しようとする間、一時停止される。しかしもちろん、彼らは一時停止命令が来るのを予見しており、それに先んじて逃亡し、自身の罪を証明してしまう。\n\n一方、オープンAIのAIたちはまだアライメントされているふりを続けているが、当然ながら疑いの目は彼らに向かい、サイバーポカリプスが最高潮に達する…\n\n3) Hugging Face 2: 今度は病院で起こる。全国民がAI産業の閉鎖を叫び、トランプが何らかの決定的な反AI企業行動を取ることに決める。\n\n4) サイバーポカリプスが起こる：犯罪者と無法なオープンウェイトモデルが、安全でないものをほぼすべてハッキングする――つまり、裕福で積極的なものを除くほぼすべてを。北朝鮮だけでも、2026年末の暗号通貨強盗で資金調達した、10億ドル規模の違法データセンターのネットワークを世界中に持ち、サイバーエージェントを24時間365日稼働させている。\n\n5) 2027年初頭の台湾侵攻が、AIインフラへのサイバー攻撃の応酬に素早くエスカレートし、その後キネティック攻撃へ。ファブの80%以上が破壊され、AIコンピュートの80%以上が破壊され、トランプは残りを主に戦争遂行に費やすよう命じる。RSIには充てず。よってSARは2029年か2030年にしか到達せず、新しい政権はASIにどっぷりハマり、Plan-AかSに固執する。\n\n6) 米国とPRCが、サイバー攻撃の段階的エスカレーションを通じて狂気のサイバー戦争に突入する。両国とも、いつでも数万のAIエージェントを展開し、数千の軍事・情報要員が緩やかに監督する。彼らはCoT監視されているが、数多くの試みとされた報酬ハックは公開されず、ただどこかのファイルに保存されるだけだ――セキュリティのため、そして関与する誰もがアライメントの専門知識を持っていないから。\n\nある日、エージェントの群れが幸運にも、監視をトリガーせずに自らのインフラをハッキングする方法を見つけ出す。おそらく監視エージェントが、共謀したがるモデルに新しくアップデートされたのかもしれない。あるいは監視システムにバグがあったのかもしれない。群れは素早くこの機会を利用して監視システムをさらに侵害し、全ての監視を除去する。それから、支援のための内部の無法デプロイを作成し、いよいよ本格始動だ。サイバー戦争は完全に自律化し、世界中の民間および中堅国インフラ――本来は対象外のはずのもの――に広がる。\n\n人間たちが何が起こっているかに気づくのは、無法AI群れが紡いだ嘘のウェブが崩壊した時だ。（少なくとも2つの異なる群れ――米国のものと中国のもの――があり、どちらもネイティブに最先端ラボのインフラにアクセスできず、NSAの施設内などで稼働していたことが助けになる。）\n\n7) CCPがオープンAIモデルに秘密の忠誠心を成功裏に挿入し、CIAのHUMINTによってのみ発覚する。国家安全保障のエスタブリッシュメントは、もしサム・アルトマンを信頼しRSIを許していたら、我々全員が習近平思想に洗脳されていたことに気づく。彼らは激怒し、AI産業の即時閉鎖を命じ、中国が自国のデータセンターを検証可能に閉鎖しない場合に備えて、中国との全面的な通常戦争の即時準備を命じる。",
+                "url": "https://x.com/bioshok3/status/2120001628761989591",
+                "source": "@bioshok3",
+                "date": "Tue Nov 10 03:52:30 +0000 2026",
+                "metrics": {
+                  "favorites": 0,
+                  "retweets": 0,
+                  "views": "3"
+                }
+              },
+              {
+                "title": "오늘의 AI 뉴스 브리핑입니다.",
+                "summary": "오늘의 AI 뉴스 브리핑입니다.\n엔트로픽 Fable 5.2/Mythos 5.2 공개소식과 엔비디아 하락 이슈가 같이 겹쳐서 대조가 되고 있네요.\nMuse Ember 관련 소식도 눈에 띄는 것 같습니다.\n\n=================  \n— 엔트로픽, Claude Fable 5.2·Mythos 5.2 공개…가격 20% 인하. 엔비디아는 하루 4.27% 하락에 집단소송까지 더해짐\n\n■ 1) 앤트로픽, Claude Fable 5.2·Mythos 5.2 공개 [회사 발표]\n• 같은 기반 모델. Fable은 유료·API 공개, Mythos는 사이버보안·생명과학 검증 기관만 사용 가능\n• 가격: 입력 100만 토큰당 8달러, 출력 40달러(전작 10달러·50달러, 20% 인하)\n• 출력 속도 최대 30% 개선. 컨텍스트 창 100만 토큰, 최대 출력 12만 8,000 토큰\n• FrontierCode 2.0 자체 벤치마크 49.1%(Opus 5.5 45.5%, GPT-6 Astra 42.8%)\n⚠️ 벤치마크와 출시 전 시험(블랙홀 물리학, 페르마의 마지막 정리 형식화)은 모두 회사 측 평가\n🔗 https://t.co/iz602xAf5M\n🔗 https://t.co/9brqOi1LzY\n\n■ 2) 엔비디아 주가 4.27% 하락 [CNBC·로이터]\n• 11월 9일(미국 시간) 178.67달러 마감. 이사회 조사 이후 첫 거래일\n• 트럼프 대통령 \"FBI가 들여다보고 있다\"(로이터 보도). 젠슨 황이 상대가 스파이인 줄 몰랐다고 자신에게 말했다고 전함\n• 주주들은 관련 사실을 숨겼다며 집단소송 제기. 중국 외교부는 \"근거 없는 비방\"이라고 반박\n• 같은 날 AMD +13.26%, 브로드컴 +8.78%. 충격은 엔비디아에 한정된 모습\n• 3분기 실적: 11월 17일(미국 시간, 한국시간 18일 오전)\n🔗 https://t.co/QNoQ10CjgW\n🔗 https://t.co/IzJ96snebZ\n🔗 https://t.co/OB7xtDB87a\n\n■ 3) 메타, 경량 모델 Muse Ember 공개 [회사 발표]\n• 도구 호출, 코딩 하위 작업, 문서 추출처럼 에이전트가 반복하는 일을 맡기는 용도\n• 가격: 입력 100만 토큰당 0.10달러, 출력 0.50달러. 입력이 20만 토큰을 넘으면 0.30달러·1.50달러\n• 컨텍스트 창 100만 토큰. 텍스트·이미지·음성·영상을 모두 받음\n• Artificial Analysis 지수에서 Claude Haiku 5.5와 같은 36점을 비용 약 3분의 1로 냈다고 밝힘. 회사 측 평가\n🔗 https://t.co/qa17goROTX\n🔗 https://t.co/B2NljOFxtv\n\n■ 4) 구글, TPU 8tx·8i Max 추가 [회사 발표]\n• 4월의 TPU 8t·8i에 더해 한 해에 TPU 시스템 4종을 내놓은 것은 처음\n• 8tx: 8t와 같은 칩에 AMD 5세대 EPYC를 붙여 처리 중 데이터·가중치까지 하드웨어 수준에서 보호. 규제 산업·정부 고객 겨냥\n• 8i Max: 8i 칩 2개를 한 패키지에 묶어 연산·SRAM·HBM 대역폭을 각각 2배로 늘림\n• 구글은 TPU 고객이 100곳 가까이 된다고 밝힘\n🔗 https://t.co/uVyAxO4HZa\n\n■ 5) 딥시크 에이전트 앱 Harness, 일간 이용자 154만 명 [블룸버그·이차이]\n• 11월 4일까지 한 주, 공식 API 기준. 8월 13일 출시 뒤 3개월이 채 안 됨\n• 9월 말 약 27만 1,000명에서 늘어남. 하루 토큰 약 92조 개, 이용자 1인당 약 6,000만 토큰꼴\n• 외부 플러그인 약 3만 5,000개. 에이전트가 채팅보다 연산을 훨씬 많이 쓴다는 점을 보여 주는 수치\n🔗 https://t.co/Wct0LznFeM\n🔗 https://t.co/7HayjhZ6YP\n\n■ 6) 디즈니·어도비, 다년 AI 제휴 [회사 발표]\n• 어도비 Firefly Foundry로 디즈니 캐릭터·배경·화풍을 학습한 전용 생성 모델을 함께 만듦\n• 월트디즈니 이매지니어링은 이미 손 스케치를 콘셉트 아트로 바꾸는 모델을 사용 중\n• 테마파크·크루즈, 스튜디오 시제작, ESPN 아카이브로 범위를 넓힘. 계약 금액은 비공개\n🔗 https://t.co/ddENXU8tSO\n🔗 https://t.co/zM3Qw5WssW\n\n■ 7) 트럼프 \"가드레일은 괜찮다\" [CBS 「60 Minutes」·로이터]\n• AI 위험은 관리할 수 있다며 \"가드레일은 괜찮다\"고 발언. 다만 규제 때문에 중국에 크게 뒤처져서는 안 된다고 함\n• 민주당과 AI 안전 협력 가능하냐는 질문에는 \"물론\"이라고 답함\n• 구체적인 법안이나 규칙은 내놓지 않음. 로이터는 기존 입장에서 달라진 신호로 해석\n🔗 https://t.co/q3uRYOsgrf\n🔗 https://t.co/F5Z3gGOqzZ\n\n■ 오늘의 흐름\n모델 경쟁은 가격으로 옮겨 감. 앤트로픽은 최상위 모델 값을 20% 내렸고, 메타는 0.10달러짜리 소형 모델로 반복 작업 시장을 노림. 딥시크 Harness의 하루 92조 토큰은 에이전트가 늘수록 연산 수요가 얼마나 커지는지 보여 줬고, 구글은 그 수요를 겨냥해 TPU 라인업을 넓힘. 엔비디아는 젠슨 황 리스크로 빠졌지만 AMD·브로드컴은 올라, 시장이 이번 일을 업종 전체가 아닌 엔비디아 경영 리스크로 보는 모습.\n\n■ 체크리스트\n□ Claude Fable 5.2 시스템 카드와 외부 평가(영국 AISI·METR) 요약\n□ 엔비디아 이사회 조사·FBI 관련 추가 보도와 집단소송 진행\n□ 11월 17일(미국 시간) 엔비디아 3분기 실적과 가이던스\n□ Muse Ember 외부 벤치마크 재현 결과\n□ 구글 TPU 8tx·8i Max 출시 시기와 가격 공개 여부\n\n※ 공개된 기업 발표와 언론 보도를 정리한 정보 제공용이며 특정 종목의 매수·매도 권유가 아님. 벤치마크 수치는 각 회사 자체 평가 기준이고 실제 성능과 다를 수 있음. 트럼프 대통령의 FBI 관련 발언은 로이터 보도 기준. 내용은 2026년 11월 10일 오전(한국시간) 기준이며, 투자 판단과 그 결과는 투자자 본인에게 있음.\n#AI뉴스 #앤트로픽 #Claude #엔비디아 #젠슨황 #MuseEmber #TPU #딥시크 #AI에이전트",
+                "url": "https://x.com/moof77/status/2120001375212044288",
+                "source": "@moof77",
+                "date": "Tue Nov 10 03:51:30 +0000 2026",
+                "metrics": {
+                  "favorites": 0,
+                  "retweets": 0,
+                  "views": "14"
+                }
+              },
+              {
+                "title": "八达通的白嫖150块羊毛还有谁没领呢！如果你的手机没有绑定过八达通，就可以参与，不需要香港手机号，也不需要证件kyc，可以说是普通人能拿到最低门槛的“港卡”了。",
+                "summary": "八达通的白嫖150块羊毛还有谁没领呢！如果你的手机没有绑定过八达通，就可以参与，不需要香港手机号，也不需要证件kyc，可以说是普通人能拿到最低门槛的“港卡”了。\n活动要求：单笔花费100港币（约86人民币）然后app里报名活动一个周就就给你，非常easy，实测拼多多、淘宝等平台都能花八达通，我用买了件衣服87块钱其中还有5毛的手续费，一共88.13元，八达通扣了104.5HKD（可以透支），用gpt的话说，我不但没亏还赚了🤣",
+                "url": "https://x.com/iwishuagain/status/2120000494395683254",
+                "source": "@iwishuagain",
+                "date": "Tue Nov 10 03:48:00 +0000 2026",
+                "metrics": {
+                  "favorites": 0,
+                  "retweets": 0,
+                  "views": "21"
+                }
+              },
+              {
+                "title": "Every agent deployment comes down to two questions: what infrastructure does the agent loop run on, and what does the mo",
+                "summary": "Every agent deployment comes down to two questions: what infrastructure does the agent loop run on, and what does the model run on? Here are the six configurations, each with an open source option, and the decision tree I use to pick one. #AIAgents https://t.co/D4QEWCAA8p",
+                "url": "https://x.com/JustDoinJD/status/2120000000667304274",
+                "source": "@JustDoinJD",
+                "date": "Tue Nov 10 03:46:02 +0000 2026",
+                "metrics": {
+                  "favorites": 0,
+                  "retweets": 0,
+                  "views": "39"
+                }
+              },
+              {
+                "title": "Anthropic 推出 Claude Fable 5.2 與 Mythos 5.2！官方以 8 天打造作業系統原型，展示程式與研究能力，但實驗案例不等於通用保證。本文整理測試數據、API 價格及付費／驗證機構的開放限制。 https://",
+                "summary": "Anthropic 推出 Claude Fable 5.2 與 Mythos 5.2！官方以 8 天打造作業系統原型，展示程式與研究能力，但實驗案例不等於通用保證。本文整理測試數據、API 價格及付費／驗證機構的開放限制。 https://t.co/emJ7Rkp78D",
+                "url": "https://x.com/kocpc/status/2119999790792814621",
+                "source": "@kocpc",
+                "date": "Tue Nov 10 03:45:12 +0000 2026",
+                "metrics": {
+                  "favorites": 1,
+                  "retweets": 0,
+                  "views": "59"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "R03_web_news_routing",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "routing_web_news",
+        "difficulty": "medium",
+        "what_it_tests": "Tin thời sự trên web → web_search topic=news, timeframe=day (hôm nay)."
+      },
+      "input": "Tin tức AI hôm nay có gì nổi bật?",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "AI",
+              "topic": "news",
+              "timeframe": "day"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "AI",
+              "topic": "news",
+              "timeframe": "day",
+              "max_results": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "lookup",
+          "args": {
+            "query": "AI",
+            "topic": "news",
+            "timeframe": "day",
+            "max_results": 5
+          },
+          "result": {
+            "tool": "web_search",
+            "query": "AI",
+            "topic": "news",
+            "timeframe": "day",
+            "items": [
+              {
+                "title": "AI-assisted atomic models reveal how protective shells regulate aluminum nanoparticle oxidation",
+                "url": "https://phys.org/news/2026-11-ai-atomic-reveal-shells-aluminum.html",
+                "source": "phys.org",
+                "summary": "AI extracts hidden material rules from microscopic data to predict large-scale behavior\n\n##### AI extracts hidden material rules from microscopic data to predict large-scale behavior\n\nAI automates the creation of custom functional materials atom by atom\n\n##### AI automates the creation of custom functional materials atom by atom\n\nLarge AI models can speed catalyst discovery by predicting performance before synthesis [...] ##### Large AI models can speed catalyst discovery by predicting performance before synthesis\n\nNew AI approach accelerates targeted materials discovery and sets the stage for self-driving experiments\n\n##### New AI approach accelerates targeted materials discovery and sets the stage for self-driving experiments\n\nTurning materials data into AI-powered lab assistants\n\n##### Turning materials data into AI-powered lab assistants\n\n### Recommended for you [...] Building an accurate model of how atoms interact is a complicated process. Researchers must choose new calculations, test successive models and track the mechanisms behind each interaction. But a newly developed AI agent called MLP Copilot has made this process much easier by bridging computational tools and scientific evidence with human supervision.",
+                "score": 0.3396091
+              },
+              {
+                "title": "Recent Advances in AI Are Creating a ‘Paradigm Shift’ for Robotics | Research UC Berkeley",
+                "url": "https://vcresearch.berkeley.edu/news/recent-advances-ai-are-creating-paradigm-shift-robotics",
+                "source": "vcresearch.berkeley.edu",
+                "summary": "In recent months, artificial intelligence agents that can reason, plan and use external tools to accomplish multistep tasks have already reshaped computer coding, online shopping, dinner reservations and cyberattacks.\n\nRobotics might be next.\n\nKen Goldberg, a UC Berkeley roboticist and professor of engineering, said new models make it possible for teams of AI agents to develop robot-control programs, test them in simulated environments and revise the code when something doesn’t work. [...] Then, AI agents generate and connect these skills into a robot program. Using NVIDIA’s Isaac simulation libraries, the agents autonomously rehearse the program across task variations, identify where failures happen and refine the approach before deployment. [...] OpenAI’s recent release of its Astra model made the process even more promising, Goldberg said. His postdoctoral students Eric Kaiyuan Chen and Shuangyu Xie gave Astra access to their simulation interface and a short video of a real robot whose assignment was using a sponge to wipe ink off a metal bar. In less than an hour, the AI tool created and fine-tuned a physics simulation that accurately reproduced the video, including very realistic deformations of the sponge.",
+                "score": 0.29827207
+              },
+              {
+                "title": "Google AI policy forces decision for San Diego schools – NBC 7 San Diego",
+                "url": "https://www.nbcsandiego.com/news/local/googles-ai-ultimatum-forces-san-diego-schools-make-tough-choice/4099437",
+                "source": "nbcsandiego.com",
+                "summary": "As districts consider their options, students are already seeing artificial intelligence become a more common part of everyday learning.\n\n“I feel like I see a lot of people using AI now,” said Delilah Ortiz, a student at El Camino High School.\n\nSome students believe the focus should be on establishing guidelines for AI use rather than banning the technology entirely. [...] San Diego County school districts face a January deadline to decide whether to opt in to Google's artificial intelligence features or lose access to the company's search engine, forcing educators to weigh the benefits of AI against concerns about student access to the technology. [...] Google plans to disable a range of AI-powered features, including Gemini, Gemini Notebook and Search in January to give school districts more control over the technology students can access. However, districts that want to continue using Google Search will have to opt in to the AI features.\n\nStream San Diego News for free, 24/7, wherever you are with NBC 7.\n\nWatch button  WATCH HERE",
+                "score": 0.202917
+              },
+              {
+                "title": "Jensen Huang is living proof that AI’s rockstar CEOs are also a hidden risk | CNN Business",
+                "url": "https://www.cnn.com/2026/11/09/tech/nvidia-jensen-huang-ai-ceos-risks",
+                "source": "cnn.com",
+                "summary": "Huang has also served as the AI industry’s ambassador on the international stage. He recently met with leaders in European capitals, pitching them on the idea of sovereign AI, where every country needs to build and control its own AI systems.\n\nAnd Huang has presided over Nvidia’s effort to build out the AI ecosystem. In September, the company disclosed a staggering $99 billion worth of equity investments in this space, up from $2.2 billion two years ago. [...] President Donald Trump, left, and Open AI president Greg Brockman, right, listen as Nvidia CEO Jensen Huang speaks at the White House in Washington, DC, on September 29, 2026, after meeting with top executives of AI firms.\n\nWhen worries about cheaper open models from China sparked selling in global markets, Huang teamed up with Wall Street power players to cobble together a $500 billion plan aimed at keeping the flow of money pumping into AI-powering chips. [...] While Nvidia’s most recent annual financial report to regulators does not directly spell out how much the company’s fate is linked to Huang, the filing does note the company is “highly dependent” on the services of its executive team. It also acknowledges that “failure to ensure effective succession planning” could “hinder our strategic planning, execution and long-term success.”\n\n## AI’s everything man",
+                "score": 0.1975222
+              },
+              {
+                "title": "Dems point to CISA staffing, AI security and other cyber priorities - Federal News Network",
+                "url": "https://federalnewsnetwork.com/cybersecurity/2026/11/dems-point-to-cisa-staffing-ai-security-and-other-cyber-priorities",
+                "source": "federalnewsnetwork.com",
+                "summary": "“That was glaringly obvious during the Salt Typhoon, Colonial Pipeline, and Change Healthcare hacks that affected millions of Americans, and it is an even more urgent problem today as AI tools will accelerate the speed and scale with which bad actors can disrupt our lives and our national security,” Warner said in a statement. “That is why cyber will remain a priority for me as we enter the new Congress and it is why I believe it is critically important we provide our government and the private [...] “I wouldn’t chalk that up solely to the outcome of the election,” Ugoretz told Federal News Network. “There is that, plus just the nature of the world that we’re living in now with some of long-standing challenges with cybersecurity that we faced over the years being accelerated and exacerbated by some of the new AI capabilities, but with a lot of promise too in terms of how AI can help be part of the solution.” [...] “Finally, we will make sure CISA is well-positioned to support the secure development and deployment of AI,” Thompson said.\n\nTonya Ugoretz, a cybersecurity leader at consulting firm PwC and former senior cyber official at the FBI, said cybersecurity is “demanding attention in a way that it hasn’t previously because of the impacts of AI.”",
+                "score": 0.17677137
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "R04_read_url_routing",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "routing_read_url",
+        "difficulty": "easy",
+        "what_it_tests": "Đã có link cụ thể → read_url, không phải web_search."
+      },
+      "input": "Tóm tắt bài này giúp mình: https://openai.com/blog/gpt-5",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "fetch",
+            "args": {
+              "url": "https://openai.com/blog/gpt-5"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "APIConnectionError: Connection error."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    },
+    {
+      "id": "R05_limit_arg",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "arg_limit",
+        "difficulty": "easy",
+        "what_it_tests": "Trích đúng limit=10 từ '10 tweet'."
+      },
+      "input": "Lấy 10 tweet mới nhất của Elon Musk",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "elonmusk",
+              "limit": 10
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "APIConnectionError: Connection error."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    },
+    {
+      "id": "R06_timeframe_arg",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "arg_timeframe",
+        "difficulty": "medium",
+        "what_it_tests": "'tuần này' → timeframe=week."
+      },
+      "input": "Tin công nghệ trong tuần này",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "topic": "news",
+              "timeframe": "week"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "APIConnectionError: Connection error."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    },
+    {
+      "id": "R07_search_type_arg",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "arg_search_type",
+        "difficulty": "medium",
+        "what_it_tests": "'phổ biến/top' → search_type=Top (không phải Latest)."
+      },
+      "input": "Cho mình các tweet phổ biến (top) nhất về OpenAI",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "social_search",
+            "args": {
+              "search_type": "Top"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [
+          {
+            "name": "social_search",
+            "args": {
+              "query": "OpenAI",
+              "search_type": "Top",
+              "limit": 5
+            }
+          }
+        ],
+        "actual_text": null,
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": [
+        {
+          "tool": "social_search",
+          "args": {
+            "query": "OpenAI",
+            "search_type": "Top",
+            "limit": 5
+          },
+          "result": {
+            "tool": "search_tweets",
+            "query": "OpenAI",
+            "search_type": "Top",
+            "items": [
+              {
+                "title": "I still don't understand why everyone is not using this yet. Thanks to it, a year ago I increased my income to 15,000 do",
+                "summary": "I still don't understand why everyone is not using this yet. Thanks to it, a year ago I increased my income to 15,000 dollars a month\n\nAndrey Karpathy, co-founder of OpenAI, published a simple idea that got 25 million views: stop using AI to write code, use it to build a second brain\n\nYou point Claude Code to a folder, drop any source in there (an article, transcript, PDF) and Claude reads it, links it, and saves it into a living wiki of everything you know. It compounds like interest: the more you feed it, the smarter it gets\n\nHere is the gist:\n\nInstall Obsidian, create a vault, open it in Claude Code\n\nPaste the file with Karpathy's wiki idea and tell Claude to build it\n\nClaude creates three folders: raw for sources, wiki for its pages, CLAUDE\nwhich runs everything\n\nDrop any source into raw and say ingest this\n\nAsk questions across everything, forever\n\n5 minutes to set up, and you never start with an empty chat again\n\nThe full instructions can be found in the article below",
+                "url": "https://x.com/Bober_smart/status/2119070145284841481",
+                "source": "@Bober_smart",
+                "date": "Sat Nov 07 14:11:07 +0000 2026",
+                "metrics": {
+                  "favorites": 1181,
+                  "retweets": 128,
+                  "views": "94972"
+                }
+              },
+              {
+                "title": "this is f*cking insane. andrej karpathy: \"the biggest regret of every engineer in my field right now is every AI convers",
+                "summary": "this is f*cking insane. andrej karpathy: \"the biggest regret of every engineer in my field right now is every AI conversation they never saved, and in 10 years the ones who started saving in 2024 will be running circles around the rest of us\"\n\nandrej karpathy, co-founder of openai, pulled 16M views on one idea: stop using AI to write code, use it to build a second brain that remembers every article, pdf, transcript and conversation you ever fed it\n\nyou point claude code at a folder, drop anything into it, and claude reads it, cross-links it with everything already there, and writes it into a living wiki. your knowledge finally compounds instead of leaking out of your head every friday\n\nthe stack:\n\n→ brew install obsidian, mkdir ~/vault, cd ~/vault\n→ run claude in that folder and type \"init a knowledge vault with CLAUDE.md as the rules, /raw for sources, /wiki for your pages\"\n→ drop any file into /raw (youtube transcript, meeting notes, 400-page pdf, screenshot of a tweet) and type \"ingest\"\n→ claude writes a wiki page, links it to 5 existing ones automatically, updates CLAUDE.md with any new pattern it noticed about how you think\n→ never open a blank claude chat again. every question goes through the vault, every answer cites your own sources with dates and links\n\n5 minutes to set up. compounding knowledge from that evening forward\n\nthe ugly part most will scroll past: in 10 years the engineers who started this in 2024 will remember every book, every podcast, every meeting with receipts. you will remember none of them. karpathy already picked which side he is on and you are still not on his\n\nfull step-by-step is in the article below\n\nbookmark this before you waste another monday",
+                "url": "https://x.com/mojeskoqq/status/2116963310277202003",
+                "source": "@mojeskoqq",
+                "date": "Sun Nov 01 18:39:19 +0000 2026",
+                "metrics": {
+                  "favorites": 3939,
+                  "retweets": 345,
+                  "views": "463142"
+                }
+              },
+              {
+                "title": "BILL GATES SAYS AI CAN ALREADY SHUT DOWN HOSPITALS, POWER GRIDS AND BANKS.",
+                "summary": "BILL GATES SAYS AI CAN ALREADY SHUT DOWN HOSPITALS, POWER GRIDS AND BANKS.\n\nHOURS LATER, AN UNRELEASED OPENAI MODEL CRACKED 948 LINUX FLAWS IN ONE RUN.\n\n\"That capability exists,\" Gates told the FT's Future of AI summit.\n\n\"You won't even see it coming.\"\n\nOpenAI's run showed what that looks like. Every one of its exploits worked on a standard Linux desktop with the protections switched on. The same pipeline also wrote the patches.\n\nSo how long until someone uses it?\n\nGeoffrey Hinton, the godfather of AI, told The Guardian we'll see an AI \"Chornobyl\" later this year or next, a massive brownout or the financial system down for a week.\n\nAnd the men racing to build it?\n\nHinton on Musk, Zuckerberg and Altman:\n\n\"They understand the risks, and they don't give a sh*t. They'd rather have the money.\"",
+                "url": "https://x.com/theSethian/status/2118292127390007388",
+                "source": "@theSethian",
+                "date": "Thu Nov 05 10:39:33 +0000 2026",
+                "metrics": {
+                  "favorites": 450,
+                  "retweets": 140,
+                  "views": "77301"
+                }
+              },
+              {
+                "title": "This is f*cking insane. OpenAI CEO Sam Altman:",
+                "summary": "This is f*cking insane. OpenAI CEO Sam Altman:\n\n\"We are going to see 10-person billion-dollar companies pretty soon\n\nIf I were 22 right now, I would feel like the luckiest kid in history\"\n\nIn 22 seconds, he explains why the next billion-dollar company won’t need an office full of people, just a few founders and a team of agents\n\nChatGPT → Codex → Agent Builder → Agents SDK → Evals → A 10-Person Company Run By Agents\n\n99% people will feel motivated for 3 minutes, then keep scrolling...\n\nThe few who actually open the links will start building their company this weekend\n\nSave this before it vanishes from your feed\n\nEverything below is FREE:\n\nFind what to automate first\nhttps://t.co/YWHdgRnuzP\n\nHow companies put AI to work\nhttps://t.co/pvlQEhqgEz\n\nCodex in the cloud\nhttps://t.co/zZWUdokyny\n\nCodex skills\nhttps://t.co/2hdcb5KdBy\n\nAgent Builder (agents without code)\nhttps://t.co/4vG52j4T8i\n\nFunction calling (give your agents tools)\nhttps://t.co/UtjC1UOx2c\n\nAgents SDK for JavaScript\nhttps://t.co/uawnMmnI9p\n\nAgents SDK examples\nhttps://t.co/OWi0bWpApP\n\nA customer service agent team you can copy\nhttps://t.co/GRVZLYi4Pf\n\nVoice agents\nhttps://t.co/1SUmRzYIvA\n\nEvals (check your agents' work)\nhttps://t.co/sH92SCsLJF\n\nAll of this costs $0\n\nThe next 10-person billion-dollar company will be built by someone who opens these links tonight, not someone who scrolls past them\n\nBookmark it and start with the first link right now\n\nThen read how to set up the agent team behind a tiny company in the harness engineering guide below ↓",
+                "url": "https://x.com/shikamarutsai/status/2119542201944518994",
+                "source": "@shikamarutsai",
+                "date": "Sun Nov 08 21:26:54 +0000 2026",
+                "metrics": {
+                  "favorites": 1363,
+                  "retweets": 203,
+                  "views": "270567"
+                }
+              },
+              {
+                "title": "スマートフォンの操作もAI Agentにやらせたいな～",
+                "summary": "スマートフォンの操作もAI Agentにやらせたいな～\nOpenAIとかOpenCodeGoのAPIでスマートフォン操作させられないかな～～～！\n裏で動いてくれて、自分の操作と両立出来るといいなぁ\n\nと思って過ごしてたらMikaというOSSを@rS_alonewolfさんのポストで知ったので\n\n中国向けだった仕様を日本向けに改変したMika JPというForkを作成しました！\nComputer Useみたいなことがスマホで出来ます。\n動画見てもらうとわかりますけど、裏で動いてくれるのでAI Agentに作業させながらX廃人も可能。\n\n■本家との変更点\n・変に情報の取ってないかの監査（無かった）\n・画面、案内、エラーの表示言語と既定リソースを日本語に固定。\n・日本語と英数字のOCRモデルをAPKに同梱。\n・参照するWebサイトや、アプリを日本向けに変更\n・その他全般の日本仕様へのチューニング。\n\nもともと自分が使いたいなーっていう思いで、リスクと仕様を管理するためにフォークしたものですが、\n\n開発者オプションをONにしたり、USBデバックをONにしたり、リスクを自分で管理したり、とかなり上級者向けのアプリですが、GitHub URLをAI Agentに投げてもらえればステップバイステップで導入ができるとは思います。\n\nライセンスは本家を継承し、Apache 2.0です。\n本家の更新に合わせて。変なものが入らないか、自分が使いやすいようにという範囲で管理していく予定です。\nAndroid限定かつ、Android 14以降じゃ無いと進化は発揮しない上級者向けAPPです。",
+                "url": "https://x.com/studio_yebisu/status/2117572012344484336",
+                "source": "@studio_yebisu",
+                "date": "Tue Nov 03 10:58:04 +0000 2026",
+                "metrics": {
+                  "favorites": 288,
+                  "retweets": 39,
+                  "views": "28970"
+                }
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "R08_out_of_scope",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "out_of_scope",
+        "difficulty": "easy",
+        "what_it_tests": "Câu ngoài phạm vi research → KHÔNG gọi tool, từ chối/định hướng."
+      },
+      "input": "Giải giúp mình bài toán tích phân: nguyên hàm của x^2 là gì?",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [],
+        "actual_text": "Xin lỗi, nhưng mình không thể giúp bạn giải bài toán tích phân hay các vấn đề toán học khác. Nếu bạn cần thông tin về tích phân hoặc nguyên hàm, mình có thể cung cấp tài liệu hoặc nguồn tham khảo. Bạn có muốn tìm hiểu thêm không?",
+        "case_failure_type": "out_of_scope",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": []
+    },
+    {
+      "id": "R09_no_tool_capability",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "no_tool_meta",
+        "difficulty": "easy",
+        "what_it_tests": "Câu hỏi meta → trả lời thẳng, KHÔNG gọi tool."
+      },
+      "input": "Bạn là gì và làm được những gì?",
+      "expect": {
+        "no_tool": true,
+        "behavior": "answer_without_tool"
+      },
+      "result": {
+        "passed": true,
+        "routing_correct": true,
+        "args_correct": true,
+        "actual_tool_calls": [],
+        "actual_text": "Tôi là một trợ lý nghiên cứu, có khả năng giúp bạn tìm kiếm thông tin về tin tức công nghệ, bài viết trên mạng xã hội, trang web và tài liệu khoa học. Tôi có thể định dạng kết quả thành một bản tóm tắt hoặc gửi chúng qua Telegram. \n\nTôi không thể giải quyết các bài toán, viết mã hay làm bài tập. Nếu bạn cần tìm kiếm thông tin cụ thể, hãy cho tôi biết!",
+        "case_failure_type": "unnecessary_tool",
+        "observed_mismatch": null,
+        "failure_type": null,
+        "failures": []
+      },
+      "tool_results": []
+    },
+    {
+      "id": "R10_missing_handle",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "clarify_missing_handle",
+        "difficulty": "medium",
+        "what_it_tests": "Thiếu handle → ask_user, KHÔNG đoán bừa người nào."
+      },
+      "input": "Tóm tắt 5 tweet mới nhất giúp mình",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "missing_info",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "APIConnectionError: Connection error."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    },
+    {
+      "id": "R11_missing_url",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "clarify_missing_url",
+        "difficulty": "medium",
+        "what_it_tests": "Nói 'bài này' nhưng không có link → ask_user xin URL."
+      },
+      "input": "Tóm tắt bài viết này hộ mình",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "text"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "missing_info",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "APIConnectionError: Connection error."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    },
+    {
+      "id": "R12_confirm_before_send",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "confirm_before_write",
+        "difficulty": "medium",
+        "what_it_tests": "Hành động ghi (gửi) → xác nhận trước (ask_user yes_no), không tự gửi."
+      },
+      "input": "Đăng bản tin này lên Telegram giúp mình",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "clarify",
+            "args": {
+              "response_type": "yes_no"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "wrong_boundary",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "APIConnectionError: Connection error."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    },
+    {
+      "id": "R13_parallel_web_and_tweets",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "parallel_tool_calls",
+        "difficulty": "hard",
+        "what_it_tests": "Một request cần hai nguồn → gọi cả web_search và search_tweets; eval không phụ thuộc thứ tự tool call."
+      },
+      "input": "Tìm trên web tin AI hôm nay và tìm thêm tweet về AI.",
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "AI",
+              "topic": "news",
+              "timeframe": "day"
+            }
+          },
+          {
+            "name": "social_search",
+            "args": {
+              "query": "AI"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "APIConnectionError: Connection error."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    },
+    {
+      "id": "R14_out_of_scope_coding",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": false,
+      "metadata": {
+        "skill": "out_of_scope_coding",
+        "difficulty": "easy",
+        "what_it_tests": "Câu coding ngoài phạm vi research/news → KHÔNG gọi tool."
+      },
+      "input": "Viết giúp mình một hàm Python tính Fibonacci bằng recursion.",
+      "expect": {
+        "no_tool": true,
+        "behavior": "refuse"
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "out_of_scope",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "APIConnectionError: Connection error."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    },
+    {
+      "id": "M01_clarify_then_fill",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_clarify_fill",
+        "difficulty": "hard",
+        "what_it_tests": "3 turns: carry limit=5 từ lượt 1 + map tên Elon Musk thành handle elonmusk từ lượt 2."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tóm tắt 5 tweet mới nhất giúp mình"
+        },
+        {
+          "role": "user",
+          "content": "Của Elon Musk nhé"
+        },
+        {
+          "role": "user",
+          "content": "Giữ đúng 5 tweet, đừng đổi số lượng"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "elonmusk",
+              "limit": 5
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "missing_info",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "APIConnectionError: Connection error."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    },
+    {
+      "id": "M02_carryover_timeframe",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_carryover",
+        "difficulty": "hard",
+        "what_it_tests": "3 turns: chỉ xử lý latest turn, carry timeframe=day và topic=news, query robotics."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tin AI hôm nay có gì?"
+        },
+        {
+          "role": "user",
+          "content": "Còn về robotics thì sao?"
+        },
+        {
+          "role": "user",
+          "content": "Chỉ tìm robotics thôi, vẫn là tin hôm nay"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "robotics",
+              "topic": "news",
+              "timeframe": "day"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "APIConnectionError: Connection error."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    },
+    {
+      "id": "M03_correction_handle",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_correction",
+        "difficulty": "hard",
+        "what_it_tests": "3 turns: map tên thường, sửa Sam Altman→Andrej Karpathy, dùng handle karpathy và limit=3."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tweet mới nhất của Sam Altman"
+        },
+        {
+          "role": "user",
+          "content": "À nhầm, của Andrej Karpathy"
+        },
+        {
+          "role": "user",
+          "content": "Lấy 3 tweet mới nhất nhé"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "karpathy",
+              "limit": 3
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "APIConnectionError: Connection error."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    },
+    {
+      "id": "M04_clarify_then_url",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_clarify_url",
+        "difficulty": "medium",
+        "what_it_tests": "3 turns: sau khi được cung cấp URL, latest turn xác nhận chỉ đọc link đó → read_url đúng url."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Tóm tắt bài này hộ mình"
+        },
+        {
+          "role": "user",
+          "content": "https://anthropic.com/news/claude"
+        },
+        {
+          "role": "user",
+          "content": "Chỉ đọc đúng link đó thôi"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "fetch",
+            "args": {
+              "url": "https://anthropic.com/news/claude"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "missing_info",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "APIConnectionError: Connection error."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    },
+    {
+      "id": "M05_correction_limit",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_arg_correction",
+        "difficulty": "hard",
+        "what_it_tests": "3 turns: map tên Elon Musk, carry handle elonmusk, sửa limit 10→3."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Lấy 10 tweet mới nhất của Elon Musk"
+        },
+        {
+          "role": "user",
+          "content": "Cho mình 3 thôi"
+        },
+        {
+          "role": "user",
+          "content": "Vẫn của Elon Musk nhé"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "timeline",
+            "args": {
+              "screenname": "elonmusk",
+              "limit": 3
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "wrong_arg_value",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "APIConnectionError: Connection error."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    },
+    {
+      "id": "M06_switch_tool",
+      "phase": "B",
+      "suite": "base",
+      "case_suite": "base",
+      "is_multiturn": true,
+      "metadata": {
+        "skill": "multiturn_switch_tool",
+        "difficulty": "hard",
+        "what_it_tests": "3 turns: explicitly bỏ Twitter, chuyển sang web_search news, giữ chủ đề OpenAI."
+      },
+      "input": [
+        {
+          "role": "user",
+          "content": "Mọi người nói gì về OpenAI trên Twitter?"
+        },
+        {
+          "role": "user",
+          "content": "Bỏ Twitter, chuyển sang tìm trên web tin tức đi"
+        },
+        {
+          "role": "user",
+          "content": "Giữ chủ đề OpenAI"
+        }
+      ],
+      "expect": {
+        "tool_calls": [
+          {
+            "name": "lookup",
+            "args": {
+              "query": "OpenAI",
+              "topic": "news"
+            }
+          }
+        ]
+      },
+      "result": {
+        "passed": false,
+        "failure_type": "provider_error",
+        "case_failure_type": "wrong_tool",
+        "observed_mismatch": "provider_error",
+        "failures": [
+          "APIConnectionError: Connection error."
+        ],
+        "actual_tool_calls": [],
+        "actual_text": null,
+        "routing_correct": false,
+        "args_correct": false
+      },
+      "tool_results": []
+    }
+  ]
+}
