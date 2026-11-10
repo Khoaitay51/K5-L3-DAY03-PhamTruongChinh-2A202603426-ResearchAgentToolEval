@@ -1,1 +1,5 @@
 version,author,changed_artifact,artifact_version,prompt_hash,tools_hash,reason,hypothesis,metric_before,metric_after,run_file
+v0,PhamTruongChinh,baseline,v0+pf0c107a9d7a1+t8db0ba629f52,f0c107a9d7a1,8db0ba629f52,baseline,Đo hành vi chưa tối ưu trước khi sửa,,0.75,runs/v0_B_base_openrouter_20261110T101854161775.json
+v1,PhamTruongChinh,system_prompt.md,v1+pbaca612a6a3d+t0fb36ba058b9,baca612a6a3d,0fb36ba058b9,merged prompt + routing rules,Prompt rõ routing/clarify/out-of-scope sẽ nâng case_accuracy; còn R12/M06,0.75,0.9,runs/v1_B_base_openai_20261110T110949070180.json
+v2,PhamTruongChinh,system_prompt.md,v2+pe8709b647c51+t0fb36ba058b9,e8709b647c51,0fb36ba058b9,R12 force clarify yes_no,Agent dùng clarify(text) vì boundary cho phép nhiều path; bắt buộc yes_no trước send sẽ PASS R12,0.9,0.95,runs/v2_B_base_openai_20261110T111640723060.json
+v3,PhamTruongChinh,system_prompt.md,v3+p933b11f24ccb+t0fb36ba058b9,933b11f24ccb,0fb36ba058b9,M06 switch-source only new tool,Agent giữ social_search sau khi bỏ Twitter; rule multi-turn chỉ gọi tool mới sẽ PASS M06,0.95,1.0,runs/v3_B_base_openai_20261110T111728560670.json

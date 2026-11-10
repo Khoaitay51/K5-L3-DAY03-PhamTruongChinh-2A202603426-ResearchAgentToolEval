@@ -1,0 +1,112 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: research-ollama
+    ports:
+      - "${OLLAMA_PORT:-11434}:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+    restart: unless-stopped
+
+  ollama-init:
+    image: ollama/ollama:latest
+    container_name: research-ollama-init
+    depends_on:
+      ollama:
+        condition: service_healthy
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        echo "================================================================="
+        echo " [Ollama-Init] Kiem tra ket noi va tai model tool-calling..."
+        echo "================================================================="
+        ollama pull ${OLLAMA_MODEL:-qwen2.5:1.5b}
+        echo "================================================================="
+        echo " [Ollama-Init] Da tai thanh cong model!"
+        echo "================================================================="
+    restart: "no"
+
+  agent:
+    build:
+      context: ./starter_v0
+      dockerfile: Dockerfile
+    container_name: research-agent
+    command: ["python", "api_server.py", "--host", "0.0.0.0", "--port", "8000"]
+    ports:
+      - "${AGENT_PORT:-8000}:8000"
+    stdin_open: true
+    tty: true
+    env_file:
+      - ./starter_v0/.env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - OLLAMA_BASE_URL=http://ollama:11434/v1
+      - DOCKER_OLLAMA_BASE_URL=http://ollama:11434/v1
+    volumes:
+      - ./starter_v0:/app
+    depends_on:
+      ollama:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8000/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 5s
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  streamlit:
+    build:
+      context: ./starter_v0
+      dockerfile: Dockerfile
+    container_name: research-streamlit
+    command: ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0", "--server.headless=true"]
+    ports:
+      - "${STREAMLIT_PORT:-8501}:8501"
+    env_file:
+      - ./starter_v0/.env
+    environment:
+      - PYTHONUNBUFFERED=1
+      - OLLAMA_BASE_URL=http://ollama:11434/v1
+      - DOCKER_OLLAMA_BASE_URL=http://ollama:11434/v1
+    volumes:
+      - ./starter_v0:/app
+    depends_on:
+      ollama:
+        condition: service_healthy
+      agent:
+        condition: service_started
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8501/_stcore/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: research-tunnel
+    profiles:
+      - tunnel
+    command: tunnel --no-autoupdate --url http://streamlit:8501
+    depends_on:
+      - streamlit
+    restart: unless-stopped
+
+volumes:
+  ollama_data:
+    external: true
+    name: smartcampus_ollama_data

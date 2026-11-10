@@ -56,6 +56,26 @@ def execute_tool_call(call: ToolCall) -> dict[str, Any]:
     return {"tool": call.name, "args": call.args, "result": result}
 
 
+def execute_tool_call_with_send_guard(call: ToolCall) -> dict[str, Any]:
+    """Streamlit-safe executor: never trust model-set confirmed=true for send."""
+    if call.name != "send":
+        return execute_tool_call(call)
+
+    args = dict(call.args or {})
+    draft = args.get("text", "")
+    args["confirmed"] = False
+    guarded = ToolCall(name=call.name, args=args)
+    event = execute_tool_call(guarded)
+    # Preserve the draft the model prepared so the UI can show / confirm it.
+    result = event.get("result")
+    if isinstance(result, dict) and "text" not in result:
+        result = {**result, "text": draft}
+        event = {**event, "result": result, "args": args}
+    else:
+        event = {**event, "args": args}
+    return event
+
+
 def tool_results_message(events: list[dict[str, Any]]) -> dict[str, str]:
     return {
         "role": "user",
@@ -84,10 +104,12 @@ def run_model_tool_loop(
     tools: list[dict[str, Any]],
     model: str | None,
     max_tool_rounds: int,
+    tool_executor: Any | None = None,
 ) -> dict[str, Any]:
     working_messages = list(messages)
     rounds: list[dict[str, Any]] = []
     all_tool_events: list[dict[str, Any]] = []
+    executor = tool_executor or execute_tool_call
 
     for round_index in range(1, max_tool_rounds + 1):
         response = provider.complete(working_messages, tools, model=model, temperature=0.0)
@@ -113,7 +135,7 @@ def run_model_tool_loop(
 
         for call in calls:
             print(f"🔧 {call.name}({json.dumps(call.args, ensure_ascii=False, sort_keys=True)})")
-            event = execute_tool_call(call)
+            event = executor(call)
             round_record["tool_results"].append(event)
             all_tool_events.append(event)
 
@@ -126,6 +148,24 @@ def run_model_tool_loop(
                 return {
                     "status": "waiting_for_user",
                     "assistant_text": question,
+                    "rounds": rounds,
+                    "tool_events": all_tool_events,
+                }
+
+            # Pause when send requires explicit confirmation (do not auto-confirm).
+            if isinstance(result, dict) and (
+                result.get("status") == "needs_confirmation" or result.get("awaiting_confirmation")
+            ):
+                draft = result.get("text") or call.args.get("text") or ""
+                rounds.append(round_record)
+                return {
+                    "status": "waiting_for_confirmation",
+                    "assistant_text": (
+                        "Tôi đã chuẩn bị nội dung gửi Telegram. "
+                        "Vui lòng xem bản nháp và xác nhận trước khi gửi.\n\n"
+                        f"{draft}"
+                    ),
+                    "pending_send": {"text": draft},
                     "rounds": rounds,
                     "tool_events": all_tool_events,
                 }

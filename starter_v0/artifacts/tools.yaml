@@ -86,12 +86,19 @@ tools:
 
   # ---------------- Bonus tools ----------------
   - name: send
-    description: "Gửi một đoạn văn bản đi."
+    description: >
+      Gửi bản tin/digest lên Telegram (side-effect). WHEN: user hỏi đăng/gửi/post lên Telegram
+      và đã có nội dung cụ thể. WHEN NOT: chưa có draft; hoặc user chưa xác nhận.
+      Confirmation boundary: lần đầu LUÔN gọi với confirmed=false (hoặc dùng clarify yes_no trước).
+      Chỉ đặt confirmed=true sau khi user xác nhận đúng nội dung đó. Không tự gửi.
     parameters:
       type: object
       properties:
-        text: {type: string, default: "", description: "Nội dung"}
-        confirmed: {type: boolean, default: false, description: "Cờ xác nhận"}
+        text: {type: string, default: "", description: "Nội dung chính xác sẽ gửi lên Telegram"}
+        confirmed:
+          type: boolean
+          default: false
+          description: "true chỉ khi user đã xác nhận explicit draft này; mặc định false = chưa gửi, trả needs_confirmation"
       required: [text]
 
   - name: policy

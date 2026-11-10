@@ -126,10 +126,41 @@ Core tools:
 
 Bonus tools:
 
-- `send`: gửi text lên Telegram channel (chỉ gửi khi `confirmed=true`).
+- `send`: gửi text lên Telegram (chỉ gửi khi `confirmed=true`; Streamlit có Confirm & Send / Cancel).
 - `policy`: tìm trong company policy markdown nội bộ.
 - `papers`: tìm paper trên arXiv.
 - `paper_text`: tải PDF arXiv và trích text cục bộ.
+
+### Bonus: Telegram Delivery
+
+1. Tạo bot với [@BotFather](https://t.me/BotFather) (`/newbot`), copy token.
+2. Lấy Chat ID:
+   - Chat cá nhân: mở bot → nhấn **Start** → gọi `getUpdates` và lấy `message.chat.id`.
+   - Channel: thêm bot làm admin → đăng 1 tin → lấy `chat.id` (thường dạng `-100...`).
+3. Điền vào `starter_v0/.env` (không commit file này):
+
+```bash
+TELEGRAM_BOT_TOKEN=...
+TELEGRAM_CHAT_ID=...
+```
+
+4. Chạy UI:
+
+```bash
+cd starter_v0
+python -m streamlit run app.py
+```
+
+5. Demo luồng: research → hỏi gửi Telegram → agent trả draft (`confirmed=false`) → bấm **Confirm & Send** trên Streamlit → kiểm tra Telegram nhận tin. **Cancel** thì không gửi. Nút Confirm bị khóa sau lần gửi thành công (không gửi trùng).
+
+6. Unit test offline:
+
+```bash
+cd starter_v0
+pytest tests/test_send_telegram.py tests/test_tools_examples.py -v
+```
+
+Chi tiết BotFather / Chat ID: [TOOL-SETUP.md](TOOL-SETUP.md#6-telegram-bonus--send).
 
 Mỗi tool nằm trong thư mục riêng dưới `starter_v0/tools/<tool_name>/`.
 
